@@ -1,0 +1,739 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<powerdba-chart-list>
+
+  <charts>
+  
+    <chart name="ACTIVE_SESSIONS_BY_EVENT">
+      <description> Active Session Waits </description>
+      <query> select vsw.event, count(*) 
+                from v$session vs, 
+                     v$session_wait vsw 
+                where vsw.sid = vs.sid 
+                  and vs.status = 'ACTIVE' 
+                  and vs.type='USER'
+                  and vs.username is not null
+                  group by vsw.event</query>
+      <type> PIE </type>
+      <on-click> DB_SESSIONS </on-click>
+    </chart>
+    
+    <chart name="ACTIVE_SESSIONS_BY_SERVICE">
+      <description> Active Sessions By Service </description>
+      <query>select vs.service_name,
+                    count(*) active_sessions
+               from gv$session vs
+               where status = 'ACTIVE'
+                 and type = 'USER'
+                 and (lower(nvl(vs.program,'xxx')) not like '%emagent%' or vs.program like '%(J%')
+                 and vs.wait_class != 'Idle'
+              group by vs.service_name
+              having count(*) > 1
+              order by count(*) desc</query>
+      <type> PIE </type>
+      <on-click> DB_SESSIONS </on-click>
+    </chart>
+    
+    <chart name="BUFFER_GETS_BY_SERVICE">
+      <description> Cluster Load By Service </description>
+      <query> select vs.service_name, 
+                 round(sum(vss.value/1024),0) "Buffer Gets/1k"
+              from gv$session vs,
+                   gv$process vp, 
+                   gv$sesstat vss 
+              where vs.paddr = vp.addr(+)
+                AND vs.inst_id = vp.inst_id (+)
+                and vs.sid = vss.sid
+                AND vs.inst_id = vss.inst_id (+)
+                and vss.statistic# (+) = 9
+                and vs.status =  'ACTIVE'
+                and vs.type = 'USER'
+                and (lower(nvl(vs.program,'xxx')) not like '%emagent%' or vs.program like '%(J%')
+                and vs.wait_class != 'Idle'
+              group by vs.service_name
+              order by sum(vss.value) desc</query>
+      <type> PIE </type>
+      <on-click> DB_SESSIONS </on-click>
+    </chart>
+    
+    <chart name="ACTIVITY_BY_USER">
+      <description> Current User Activity (cons gets) </description>
+      <query> select vs.username, sum(value) 
+                from v$session vs, 
+                     v$sesstat vst,
+                     v$statname vstn
+                where vst.sid = vs.sid  
+                  and vs.type='USER'
+                  and vs.username is not null
+                  and vstn.name = 'consistent gets'
+                  and vst.statistic# = vstn.statistic#
+                  and vs.username not in ('SYS')
+                  group by vs.username
+                  order by sum(value) desc </query>
+      <type> PIE </type>
+      <topn> 5 </topn>
+      <on-click> DB_SESSIONS </on-click>
+    </chart>
+    
+    <chart name="CURSORS_BY_SESSION">
+      <description> Open Cursors </description>
+      <query> select vs.sid || '-' || vs.username, value 
+                from v$session vs, 
+                     v$sesstat vst,
+                     v$statname vstn
+                where vst.sid = vs.sid  
+                  and vs.type='USER'
+                  and vs.username is not null
+                  and vstn.name = 'opened cursors current'
+                  and vst.statistic# = vstn.statistic#
+                  and vs.username not in ('SYS')
+                  order by value desc </query>
+      <type> PIE </type>
+      <topn> 5 </topn>
+      <on-click> DB_SESSIONS </on-click>
+    </chart>
+    
+    <chart name="WRITES_BY_USER">
+      <description> Current User Activity (phys writes) </description>
+      <query> select vs.username, sum(value) 
+                from v$session vs, 
+                     v$sesstat vst,
+                     v$statname vstn
+                where vst.sid = vs.sid  
+                  and vs.type='USER'
+                  and vs.username is not null
+                  and vstn.name = 'physical writes'
+                  and vst.statistic# = vstn.statistic#
+                  and vs.username not in ('SYS')
+                  group by vs.username
+                  order by sum(value) desc </query>
+      <type> PIE </type>
+      <topn> 5 </topn>
+      <on-click> DB_SESSIONS </on-click>
+    </chart>
+    
+    <chart name="ACTIVE_SESSIONS_BY_PGM">
+      <description> Active Program Instances </description>
+      <query> select program, count(*) 
+                from v$session vs, 
+                     v$session_wait vsw 
+                where vsw.sid = vs.sid 
+                  and vs.status = 'ACTIVE' 
+                  and type='USER'
+                  and username is not null
+                  and program is not null
+                  group by program</query>
+      <type> PIE </type>
+      <on-click> DB_SESSIONS </on-click>
+    </chart>
+    
+    <chart name="SESSIONS_BY_USER">
+      <description> User Logins >= 3 </description>
+      <query> select username, count(*) 
+                from v$session vs
+                where type='USER'
+                  and username is not null
+                  group by username
+                  having count(*) >= 3</query>
+      <type> PIE </type>
+      <on-click> DB_SESSIONS </on-click>
+    </chart>
+    
+    <chart name="SESSIONS_BY_STATUS">
+      <description> Session Status Summary </description>
+      <query> select status, count(*) 
+                from v$session vs
+                where vs.type='USER' 
+                  and vs.username is not null
+              group by vs.status</query>
+      <type> PIE </type>
+    </chart>
+    
+    <chart name="ACTIVE_SESSIONS">
+      <description> Active Sessions </description>
+      <query> select vi.instance_name, count(*) 
+                from gv$session vs,
+                     gv$instance vi
+                where vs.type='USER'
+                  and vs.status = 'ACTIVE' 
+                  and vs.username is not null
+                  and vs.inst_id = vi.inst_id
+              group by vi.instance_name</query>
+      <type> PIE </type>
+    </chart>
+    
+    <chart name="ALL_SESSIONS_BY_EVENT">
+      <description> All Session Waits </description>
+      <query> select vsw.event, count(*) 
+                from v$session vs, 
+                     v$session_wait vsw 
+                where vsw.sid = vs.sid 
+                  and vs.type = 'USER'
+                  and vs.username is not null
+                group by vsw.event</query>
+      <type> PIE </type>
+      <on-click> DB_SESSIONS </on-click>
+    </chart>
+    
+    <chart name="ALL_SESSIONS_BY_MODULE">
+      <description> Module Counts </description>
+      <query> select vs.module, count(*) 
+                from v$session vs 
+                group by vs.module
+                having count(*) > 3
+      </query>
+      <type> PIE </type>
+      <on-click> DB_SESSIONS </on-click>
+    </chart>
+    
+    <chart name="PGA_BY_MACHINE">
+      <description> PGA By Client </description>
+      <query> select machine, sum(pga_alloc_mem) bytes
+  from v$process p, v$session s 
+  where s.paddr = p.addr 
+  group by machine
+  having sum(pga_alloc_mem) > (select sum(pga_alloc_mem)*.01 from v$process)
+  order by machine</query>
+      <type> PIE </type>
+    </chart>
+    
+    <chart name="Running Jobs">
+      <description> Running Jobs </description>
+      <query> select event, count(*) 
+                from v$session vs, 
+                     v$session_wait vsw 
+                where vsw.sid = vs.sid 
+                  and vs.type = 'USER'
+                  and vs.username is not null
+                group by vsw.event</query>
+      <type> PIE </type>
+    </chart>
+
+    <chart name="ARCHIVE_STATUS">
+      <description> Archiver Status </description>
+      <query> select decode(archived, 'NO','Unarchived','Archived'), count(*) 
+                from v$log 
+              group by decode(archived, 'NO','Unarchived','Archived') </query>
+      <type> PIE </type>
+      <on-click> DB_LOG_SUMMARY </on-click>
+    </chart>
+    
+    <chart name="ALL_SESSIONS_BY_SERVICE">
+      <description> Current sessions by service </description>
+      <query> select service_name, 
+                     count(*) 
+                from v$session 
+              where type = 'USER' 
+              group by service_name</query>
+      <type> PIE </type>
+    </chart>
+    
+    <chart name="RECENT_LOG_HISTORY">
+      <description> Redo Activity </description>
+      <category-query> select 'Redo Log Activity' from dual </category-query>
+      <query> select to_date(to_char(first_time, 'mm/dd/yyyy hh24:mi'),'mm/dd/yyyy hh24:mi'),
+                     count(*) 
+                from v$loghist
+                where first_time > sysdate - 1
+              group by to_date(to_char(first_time, 'mm/dd/yyyy hh24:mi'),'mm/dd/yyyy hh24:mi') </query>
+      <type> TS </type>
+      <uom> Logs </uom>
+      <time-interval> org.jfree.data.time.Minute </time-interval>
+    </chart>
+    
+    <chart name="SKT_THROUGHPUT">
+      <description> SKTREQUEST Shredder </description>
+      <category-query> select 'SKTREQUEST Throughput' from dual </category-query>
+      <query> select to_date(to_char(snapshot_time, 'mm/dd/yyyy hh24:mi'),'mm/dd/yyyy hh24:mi'),
+                     per_second
+                from ifc_admin.aq_metrics
+                where aq_component_name = 'SKTREQUEST'
+                  and snapshot_time > sysdate - 2
+                order by snapshot_time
+      </query>
+      <type> TS </type>
+      <uom> Per Second </uom>
+      <time-interval> org.jfree.data.time.Minute </time-interval>
+    </chart>
+    
+    <chart name="VIPVINEVT_THROUGHPUT">
+      <description> VIPVINEVT Shredder </description>
+      <category-query> select 'VIPVINEVT Throughput' from dual </category-query>
+      <query> select to_date(to_char(snapshot_time, 'mm/dd/yyyy hh24:mi'),'mm/dd/yyyy hh24:mi'),
+                     per_second
+                from ifc_admin.aq_metrics
+                where aq_component_name = 'VIPVINEVT'
+                  and snapshot_time > sysdate - 2
+                order by snapshot_time
+      </query>
+      <type> TS </type>
+      <uom> Per Second </uom>
+      <time-interval> org.jfree.data.time.Minute </time-interval>
+    </chart>
+    
+    <chart name="CHK_THROUGHPUT">
+      <description> CHK Usage Shredder </description>
+      <category-query> select 'CHK Throughput' from dual </category-query>
+      <query> select to_date(to_char(snapshot_time, 'mm/dd/yyyy hh24:mi'),'mm/dd/yyyy hh24:mi'),
+                     per_second
+                from ifc_admin.aq_metrics
+                where aq_component_name = 'CHK'
+                  and snapshot_time > sysdate - 2
+                order by snapshot_time
+      </query>
+      <type> TS </type>
+      <uom> Per Second </uom>
+      <time-interval> org.jfree.data.time.Minute </time-interval>
+    </chart>
+    
+    <chart name="CHK_QRATE">
+      <description> CHK Msg Rate </description>
+      <category-query> select 'CHK Generation Rate' from dual </category-query>
+      <query> select to_date(to_char(snapshot_time, 'mm/dd/yyyy hh24:mi'),'mm/dd/yyyy hh24:mi'),
+                     per_second
+                from ifc_admin.aq_metrics
+                where aq_component_name = 'CHK2_XML_QUEUE_SRC'
+                  and snapshot_time > sysdate - 2
+                order by snapshot_time
+      </query>
+      <type> TS </type>
+      <uom> Per Second </uom>
+      <time-interval> org.jfree.data.time.Minute </time-interval>
+    </chart>
+    
+    <chart name="SKT_QRATE">
+      <description> SKTREQUEST Msg Rate </description>
+      <category-query> select 'SKTREQUEST Generation Rate' from dual </category-query>
+      <query> select to_date(to_char(snapshot_time, 'mm/dd/yyyy hh24:mi'),'mm/dd/yyyy hh24:mi'),
+                     per_second
+                from ifc_admin.aq_metrics
+                where aq_component_name = 'SKT_XML_QUEUE_SRC'
+                  and snapshot_time > sysdate - 2
+                order by snapshot_time
+      </query>
+      <type> TS </type>
+      <uom> Per Second </uom>
+      <time-interval> org.jfree.data.time.Minute </time-interval>
+    </chart>
+    
+    <chart name="ACTIVITY_HISTORY">
+      <description> System Load </description>
+      <category-query> select 'user calls' from dual union all select 'user commits' from dual </category-query>
+      <query> PERFSTAT:508 </query>
+      <type> TS </type>
+      <uom> Calls/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="REDO_HISTORY">
+      <description> Redo Logging </description>
+      <category-query> select 'redo writes' from dual </category-query>
+      <query> PERFSTAT:508 </query>
+      <type> TS </type>
+      <uom> Writes/Sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="PARSING_HISTORY">
+      <description> Library Cache </description>
+      <category-query> select 'parse count (hard)' from dual union all 
+                       select 'parse count (total)' from dual union all
+                       select 'execute count' from dual</category-query>
+      <query> PERFSTAT:508 </query>
+      <type> TS </type>
+      <uom> Operations/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="PHYSICAL_WRITES">
+      <description> Physical Writes </description>
+      <category-query> select 'physical writes' from dual union all
+                       select 'redo writes' from dual</category-query>
+      <query> PERFSTAT:508 </query>
+      <type> TS </type>
+      <uom> writes/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="CPU_HISTORY">
+      <description> Activity </description>
+      <category-query> select 'CPU used by this session' from dual </category-query>
+      <query> PERFSTAT:508 </query>
+      <type> TS </type>
+      <uom> CPU Time </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="CACHE_HISTORY">
+      <description> Cache Activity </description>
+      <category-query> select 'consistent gets' from dual union all
+                       select 'db block gets' from dual union all
+                       select 'physical reads' from dual</category-query>
+      <query> PERFSTAT:508 </query>
+      <type> TS </type>
+      <uom> Gets/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="SORT1_HISTORY">
+      <description> Sort Rows </description>
+      <category-query> select name from v$statname where name like 'sorts (rows)' </category-query>
+      <query> PERFSTAT:508 </query>
+      <type> TS </type>
+      <uom> Rows/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="SORT2_HISTORY">
+      <description> Disk vs. Memory Sorts </description>
+      <category-query> select 'sorts (disk)' from dual union all select 'sorts (memory)' from dual </category-query>
+      <query> PERFSTAT:508 </query>
+      <type> TS </type>
+      <uom> Operations/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+
+    <chart name="WAITS_HISTORY">
+      <description> System Wait Events </description>
+      <query> PERFSTAT:504 </query>
+      <type> TS </type>
+      <uom> Time Waited/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="LOG_WAITS_HISTORY">
+      <description> Redo Contention </description>
+      <query> PERFSTAT:504 </query>
+      <category-query> select 'log file sync' from dual union all
+                       select 'log switch completion' from dual union all
+                       select 'log buffer space' from dual </category-query>
+      <type> TS </type>
+      <uom> Time Waited/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="BUFFER_WAITS_HISTORY">
+      <description> Buffer Waits </description>
+      <query> PERFSTAT:503 </query>
+      <type> TS </type>
+      <uom> Time Waited/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="TS_IO_HISTORY">
+      <description> Tablespace IO </description>
+      <query> PERFSTAT:509 </query>
+      <type> TS </type>
+      <uom> IOs/Sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="FILE_IO_HISTORY">
+      <description> Data File IO </description>
+      <query> PERFSTAT:501 </query>
+      <type> TS </type>
+      <uom> IOs/Sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="SYSTEM_IO_HISTORY">
+      <description> Data File IO </description>
+      <query> PERFSTAT:1001 </query>
+      <category-query> select 'Total IOs' from dual </category-query>
+      <type> TS </type>
+      <uom> IOs/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="DRIVE_IO_HISTORY">
+      <description> File IO by Disk </description>
+      <query> PERFSTAT:1002 </query>
+      <category-query> select distinct substr(file_name,1,4) from dba_data_files </category-query>
+      <type> TS </type>
+      <uom> IOs/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="CPU">
+      <description> CPU </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2057"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> % </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    <chart name="NETWORK">
+      <description> Network Traffic </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2058"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom>  </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    <chart name="HIT_RATIOS">
+      <description> Hit Ratios </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2000"/>
+      	<metric id="2112"/>
+      	<metric id="2001"/>
+      	<metric id="2050"/>
+      	<metric id="2002"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> %  </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="LOGINSPERSEC">
+      <description> Login Rate </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2018"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> per sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    <chart name="ACTIVITY1PERSEC">
+      <description> Host/Database Activity </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2075"/>
+      	<metric id="2123"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="ACTIVITY2PERSEC">
+      <description> Instance Activity </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2121"/>
+      	<metric id="2026"/>
+      	<metric id="2022"/>
+      	<metric id="2003"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> Executions/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> N </cluster-enabled>
+    </chart>
+    
+    <chart name="EXECUTIONS">
+      <description> Executions </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2121"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> Executions/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    <chart name="GCCR">
+      <description> GC CR </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2094"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> Blocks Rec/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    <chart name="GCCURR">
+      <description> GC Current </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2096"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> Blocks Rec/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    <chart name="TABLESCANS">
+      <description> Table Scans </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2038"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> Scans/Sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    <chart name="EXECWOPARSE">
+      <description> Exec wo parse </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2054"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> % </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    <chart name="TXNRESPONSE">
+      <description> Txn Resp Time </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2109"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> Centisecs/Txn </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    <chart name="RESPONSE">
+      <description> Sql Resp Time </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2106"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> Centisecs/Call </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    <chart name="CURRENTLOGONS">
+      <description> Logons </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2103"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> # </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    
+    <chart name="REDOGENERATED">
+      <description> Redo Generated </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2016"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> bytes/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    <chart name="LOGICALREADS">
+      <description> Logical Reads </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2030"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> Reads/sec </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    
+    <chart name="WAITS">
+      <description> Waits </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2107"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> % </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    <chart name="OWR_WIO">
+      <description> Physical Writes </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2006"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> IOs </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    <chart name="OWR_RIO">
+      <description> Physical Reads </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2004"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> IOs </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+      <cluster-enabled> Y </cluster-enabled>
+    </chart>
+    
+    <chart name="OWR_IO">
+      <description> Physical IO </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2004"/>
+      	<metric id="2006"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> IOs </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+    <chart name="SHAREDPOOLFREE">
+      <description> Shared Pool </description>
+      <query> OWR </query>
+      <owr-metrics>
+      	<metric id="2114"/>
+      </owr-metrics>
+      <category-query> </category-query>
+      <type> TS </type>
+      <uom> % </uom>
+      <time-interval> org.jfree.data.time.Second </time-interval>
+    </chart>
+    
+
+  </charts>
+  
+</powerdba-chart-list>

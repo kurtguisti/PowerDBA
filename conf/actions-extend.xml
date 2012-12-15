@@ -1,0 +1,262 @@
+<powerdba-actions>
+
+  <actions> 
+  
+    <action name="DC20QVUSAGE">
+      <menu1> DATABASE_MENU </menu1>
+      <title> Quickvin Usage </title>
+      <is-rac> false </is-rac>
+      <queries>
+        <query name="dc20qvusage"/>
+      </queries>
+    </action>
+  
+    <action name="STANDBY_STATUS">
+      <menu1> DATABASE_MENU </menu1>
+      <title> Standby Status </title>
+      <is-rac> false </is-rac>
+      <queries>
+        <query name="standbystatus"/>
+      </queries>
+    </action>
+
+    <action name="HLDBS">
+      <menu1> DATABASE_MENU </menu1>
+      <title> Findacar/FindaDealer Datasources</title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="hldbs"/>
+      </queries>
+    </action>
+    
+    <action name="PLATEFAX_HISTORY">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Platefax History </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="platefax_history"/>
+      </queries>
+    </action>
+    
+    <action name="Transactions">
+      <menu1> INSTANCE_MENU </menu1>
+      <title> Current transactions</title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="transactions"/>
+      </queries>
+    </action>
+    
+    <action name="ENQ_STATS">
+      <menu1> INSTANCE_MENU </menu1>
+      <title> Enqueue Statistics </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="enq_stats"/>
+      </queries>
+    </action>
+  
+    <action name="RESUMABLE">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Resumable Sessions</title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="resumable"/>
+      </queries>
+    </action>
+  
+    <action name="CPU_BY_SERVICE">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Service CPU Metrics</title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="cpubyservice"/>
+      </queries>
+    </action>
+    
+    <action name="TUNED_UNDO">
+      <menu1> DATABASE_MENU </menu1>
+      <title> Undo Retention Detail </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="tunedundoall"/>
+      </queries>
+    </action>
+    
+    <action name="AQ_CONSUMERS">
+      <menu1> DATABASE_MENU </menu1>
+      <title> Carfax Messaging Consumers </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="aqconsumers"/>
+      </queries>
+    </action>
+    
+    <action name="AQ_CONSUMER_THREADS">
+      <menu1> DATABASE_MENU </menu1>
+      <title> Carfax Messaging Consumer Threads </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="aqconsumerthreads"/>
+      </queries>
+    </action>
+    
+    <action name="TUNED_UNDO_SUMMARY">
+      <menu1> DATABASE_MENU </menu1>
+      <title> Undo Retention Summary </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="tunedundosummary"/>
+      </queries>
+    </action>
+    
+    <action name="ODMPROPERTIES">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Database Properties </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="odmproperties"/>
+      </queries>
+    </action>
+    
+    <action name="APPMONTASKS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Application Monitor Tasks</title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="appmontasks"/>
+      </queries>
+    </action>
+    
+    <action name="APPMONTASKRUNS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Application Monitor Task Runs</title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="appmontaskruns"/>
+      </queries>
+    </action>
+    
+    <action name="APPMONTASKRUNSROLLUP">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Application Monitor Task Runs Rolled Up</title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="appmontaskrunsrollup"/>
+      </queries>
+    </action>
+    
+    <action name="APPMONSYSTEMS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Application Monitor Systems</title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="appmonsystems"/>
+      </queries>
+    </action>
+
+    
+    <action name="APPMONSUBSYSTEMS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Application Monitor Subsystems</title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="appmonsubsystems"/>
+      </queries>
+    </action>
+    
+    <action name="APPMONLOG">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Application Monitor Log</title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="appmonlog"/>
+      </queries>
+    </action>
+    
+
+
+    <action name="SESSIONS_SQL">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Active Session SQL</title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="sessions_sql"/>
+      </queries>
+    </action>
+    
+    <action name="QUEUES_EXT">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_SRC </menu2>
+      <title> Queues </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="queues_ext"/>
+      </queries>
+    </action>
+    
+    <action name="Q_MESSAGES_EXT">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_SRC </menu2>
+      <title> Queue Summary</title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="q_messages_ext"/>
+        <query name="q_subscribers"/>
+      </queries>
+    </action>
+      
+    <action name="JDBC_URLS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> JDBC URLs </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="jdbcurls"/>
+      </queries>
+    </action>
+    
+    <action name="CURRENT_SERVICE_METRICS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Real Time Service Metrics</title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="current_service_metrics"/>
+      </queries>
+    </action>
+    
+    <action name="G_CURRENT_SERVICE_METRICS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Global Real Time Service Metrics</title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="global_current_service_metrics"/>
+      </queries>
+    </action>
+    
+    <action name="ONC_SYNC_STATUS">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> STREAMS_MENU </menu2>
+      <title> Oncontact Sync Status</title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="oncsyncstatus"/>
+      </queries>
+    </action>
+    
+  </actions>
+  
+</powerdba-actions>

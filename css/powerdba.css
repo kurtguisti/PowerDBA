@@ -1,0 +1,64 @@
+      .smallentry { font-size: 8pt; color: #222222 }
+      .verysmallentry { font-size: 7pt; color: #222222 }
+      .linkSmallWhite {font: bold 9px verdana; color: #dddddd; padding: 1px 1px 1px 1px; text-decoration: none; }
+      .linkSmallWhite2 {font: bold 9px verdana; color: #eeeeee; padding: 1px 1px 1px 1px; text-decoration: none; }
+      .linkSmall {font: 9px verdana; color: #003399; padding: 1px 1px 1px 1px; text-decoration: underline; }
+      .smallSelect {font: 9px verdana; color: #000000; padding: 0px 0px 0px 0px; text-decoration: none; }
+      .smallSelectBold {font: bold 9px verdana; color: #333333; bgcolor: #aaaaaa; padding: 0px 0px 0px 0px; text-decoration: none; }
+      .textBlock {padding: 3px;border: 1px solid #dddddd;background-color: #e5e5e5;width:1000px;}
+      .searchField {font:  9px #222222; margin: 0px; width: 140;border: 1px solid #73969c; position: relative;left: -2px;}
+      .iframeHeaderRow {width: 870px; border-bottom: 0px solid silver; padding-bottom: 1px;}
+      .iframeHeaderRow2 {width: 350px; padding: 0px;}
+
+      .iframeHeaderCell {
+        float: left;
+        font: bold 9px verdana;
+        padding: 3px;
+        border: 1px solid silver;
+        border-left: 0px;
+        border-top: 0px;
+        background-color: #e5e5e5;
+        color: black;
+        width:100px;
+        text-align: center;
+      }
+      
+      .iframeHeaderCell2 {
+        float: left;
+        font: bold 9px verdana;
+        padding: 3px;
+        border: 1px solid silver;
+        border-left: 0px;
+        border-top: 0px;
+        border-bottom: 0px;
+        background-color: #e5e5e5;
+        color: black;
+        width:80px;
+        text-align: center;
+        text-decoration: none;
+      }
+      
+      .iframeCell {
+        float: left;
+        font: bold 9px verdana;
+        padding: 3px;
+        border: 1px solid silver;
+        border-left: 0px;
+        border-bottom: 0px;
+        border-top: 0px;
+        background-color: white;
+        width:100px;
+        text-align: center;
+      }
+      .iframeCell2 {
+        float: left;
+        font: bold 9px verdana;
+        padding: 3px;
+        border: 1px solid silver;
+        border-left: 0px;
+        border-bottom: 0px;
+        border-top: 0px;
+        background-color: white;
+        width:80px;
+        text-align: center;
+      }

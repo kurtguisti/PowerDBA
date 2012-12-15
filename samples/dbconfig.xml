@@ -1,0 +1,279 @@
+<powerdba-access>
+  <db-connections>
+
+    <db>
+      <poolname>pweb1</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo01.carfax.cfx:1521:pweb1</connectstring>
+      <login>system</login>
+      <password>system_admin_pweb</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>tcfxv2</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo12:1521:tcfxv2</connectstring>
+      <login>dbm3</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>tcfxv1</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo11:1521:tcfxv1</connectstring>
+      <login>dbm3</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>pcfxm5</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo22:1521:Pcfxm5</connectstring>
+      <login>dbm3</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>pcfxm4</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo21:1521:Pcfxm4</connectstring>
+      <login>dbm3</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>pcfxm3</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo20:1521:Pcfxm3</connectstring>
+      <login>dbm3</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>pcfxm2</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo19:1521:Pcfxm2</connectstring>
+      <login>dbm3</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>tweb2</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo12:1521:tweb2</connectstring>
+      <login>system</login>
+      <password>sys_admin_tweb</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>pcfxm1</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo18:1521:Pcfxm1</connectstring>
+      <login>dbm3</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>tweb1</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo11:1521:tweb1</connectstring>
+      <login>system</login>
+      <password>sys_admin_tweb</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>pcfxv2</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@orava12:1521:pcfxv2</connectstring>
+      <login>dbm3</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>pcfxv1</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@orava11:1521:pcfxv1</connectstring>
+      <login>dbm3</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>dweb2</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo12:1521:dweb2</connectstring>
+      <login>system</login>
+      <password>system_admin_dweb</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>dweb1</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo11:1521:dweb1</connectstring>
+      <login>system</login>
+      <password>system_admin_dweb</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>z-oraoidv01</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oraoidv01:1521:vadb</connectstring>
+      <login>system</login>
+      <password>system_admin_vadb</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>N</monitor>
+    </db>
+
+    <db>
+      <poolname>z-oraoidm01</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oraoidm01:1521:modb</connectstring>
+      <login>system</login>
+      <password>system_admin_modb</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>N</monitor>
+    </db>
+
+    <db>
+      <poolname>xe</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@localhost:1521:xe</connectstring>
+      <login>system</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>N</monitor>
+    </db>
+
+    <db>
+      <poolname>z-grid</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oragridm01:1521:grid</connectstring>
+      <login>system</login>
+      <password>sys_admin_grid</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>N</monitor>
+    </db>
+
+    <db>
+      <poolname>dcfxm2</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo12:1521:dcfxm2</connectstring>
+      <login>dbm3</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>dcfxm1</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo11:1521:dcfxm1</connectstring>
+      <login>dbm3</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>tcfxm2</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo12:1521:tcfxm2</connectstring>
+      <login>dbm3</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>dcfxv2</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo12:1521:dcfxv2</connectstring>
+      <login>dbm3</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>tcfxm1</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo11:1521:tcfxm1</connectstring>
+      <login>system</login>
+      <password>system_admin_tcfxm</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>N</monitor>
+    </db>
+
+    <db>
+      <poolname>dcfxv1</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo11:1521:dcfxv1</connectstring>
+      <login>dbm3</login>
+      <password>kwg5377</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+
+    <db>
+      <poolname>pweb2</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@oramo02.carfax.cfx:1521:pweb2</connectstring>
+      <login>system</login>
+      <password>system_admin_pweb</password>
+      <email>N</email>
+      <page>N</page>
+      <monitor>Y</monitor>
+    </db>
+  </db-connections>
+</powerdba-access>

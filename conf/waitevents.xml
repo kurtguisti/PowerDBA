@@ -1,0 +1,830 @@
+<eventinfo>
+
+  <wait-events>
+  
+    <wait-event>
+      <event-name> enq: TS - contention </event-name>
+      <description> Serializes accesses to temp segments.these enqueues happen during disk sort operations  </description>
+      <event-group> TABLESPACE </event-group>
+    </wait-event>
+
+    <wait-event>
+      <event-name> direct path read temp </event-name>
+      <description> A Sorting Operation is being performed  </description>
+      <event-group> IO1 </event-group>
+    </wait-event>
+
+    <wait-event>
+      <event-name> statement suspended, wait error to be cleared </event-name>
+      <description> The session is waiting on a resumable transaction issue.  The problem needs to be corrected.  </description>
+      <event-group> SQL*Net </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> PL/SQL lock timer </event-name>
+      <description> This means that this process is running dbms_lock.sleep </description>
+      <event-group> SQL*Net </event-group>
+    </wait-event>
+
+    <wait-event>
+      <event-name> SQL*Net message from client </event-name>
+      <description> The server process (foreground process) waits for a message from the client process to arrive.
+Wait Time: The time it took for a message to arrive from the client since the last message was sent to the client</description>
+      <event-group> SQL*Net </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> SQL*Net message from dblink </event-name>
+      <description> 
+The session waits while the server process (foreground process) receives messages over a database link from another 
+server process.
+
+Wait Time: The time it took for a message to arrive from another server (foreground process) since a message was sent to the other foreground process.
+
+Parameters:
+
+driver id
+ See "driver id"
+ 
+#bytes
+ The number of bytes received by the server (foreground process) from another foreground process over a database link.
+      </description>
+      <event-group> SQL*Net </event-group>
+    </wait-event>
+   
+    <wait-event>
+      <event-name> library cache pin </event-name>
+      <description>   
+Definition:
+
+Library cache pins are used to manage library cache concurrency. Pinning an object causes the heaps to be loaded 
+into memory (if not already loaded). PINS can be acquired in NULL, SHARE or EXCLUSIVE modes and can be 
+considered like a special form of lock. A wait for a "library cache pin" implies some other session holds that 
+PIN in an incompatible mode. 
+
+Individual Waits:
+  Parameters: 
+P1 = Handle address 
+P2 = Pin address 
+P3 = Encoded Mode and Namespace 
+
+Handle address 
+Use P1RAW rather than P1
+
+This is the handle of the library cache object which the waiting session wants to acquire a pin on. 
+
+The actual object being waited on can be found using 
+
+  SELECT kglnaown "Owner", kglnaobj "Object"
+    FROM x$kglob
+   WHERE kglhdadr='P1RAW';
+   
+Pin address 
+  Use P2RAW rather than P2
+  This is the address of the PIN itself. 
+
+Encoded Mode and Namespace 
+  In Oracle 7.0 - 8.1.7 inclusive the value is 10 * Mode + Namespace. 
+  In Oracle 9.0 - 9.2 inclusive the value is 100 * Mode + Namespace. 
+
+Where:
+
+Mode is the mode in which the pin is wanted. This is a number thus: 
+2 - Share mode 
+3 - Exclusive mode 
+
+Namespace is just the namespace number of the namespace in the library cache in which the required object lives: 
+0 SQL Area 
+1 Table / Procedure / Function / Package Header 
+2 Package Body 
+3 Trigger 
+4 Index 
+5 Cluster 
+6 Object 
+7 Pipe 
+13 Java Source 
+14 Java Resource 
+32 Java Data 
+
+Wait Time: 
+  The waiter waits up to 3 seconds (1 second if PMON) for the PIN to become available. If not available 
+  then the session waits again, incrementing SEQ# in View V$SESSION_WAIT.
+   
+Finding Blockers: 
+  The following SQL can be used to show the sessions which are holding and/or requesting pins on the object 
+  that given in P1 in the wait: 
+
+  SELECT s.sid, kglpnmod "Mode", kglpnreq "Req"
+    FROM x$kglpn p, v$session s
+   WHERE p.kglpnuse=s.saddr
+     AND kglpnhdl='P1RAW';
+     
+An X request (3) will be blocked by any pins held S mode (2) on the object.
+An S request (2) will be blocked by any X mode (3) pin held, or may queue behind some other X request. 
+Diagnosis of why there is a blocking scenario will usually need help from Oracle support. If you 
+just want to clear the immediate issue then the SID information above should allow you to kill off any 
+blocking sessions. Proper diagnosis will usually require you to collect 3 SYSTEMSTATE dumps at 30 seconds 
+intervals then submit these to Oracle support with full details of the sessions and objects involved. 
+To take a SYSTEMSTATE dump connect to the instance a user with ALTER SYSTEM privilege and issue the command: 
+
+  ALTER SESSION SET max_dump_file_size = UNLIMITED;
+  ALTER SYSTEM SET EVENTS 'immediate trace name systemstate level 10';
+  
+This will produce a trace file in USER_DUMP_DEST (or BACKGROUND_DUMP_DEST if connected to a shared server).
+In a Parallel Server or RAC environment SYSTEMSTATE dumps should be taken 3 times on each node. 
+
+Systemwide Waits:
+If "library cache pin" waits form a significant amount of the wait time then it is important to determine 
+if this is one or two sessions waiting long periods of time or a more serious general contention issue among 
+lots of processes. 
+
+Use View V$SESSION_EVENT to see if the waits are across numerous sessions or isolated to one or two. 
+Use sampling of View V$SESSION_WAIT to see if the waits are always for a particular object 
+(ie: a particular value of P1RAW) 
+Use View V$SQLAREA to see if any statements have high values of LOADS as repeatedly reloading requires the pin 
+in EXCLUSIVE mode. 
+Sometime tracing user sessions which encounter waits can help (See Note:62160.1) 
+
+Reducing Waits / Wait times:
+What to do to reduce these waits depends heavily on what blocking scenario is occuring. 
+A common problem scenario is the use of DYNAMIC SQL from within PLSQL procedure where the PLSQL code 
+is recompiled and the DYNAMIC SQL calls something which depends on the calling procedure. 
+If there is general widespread waiting then the shared pool may need tuning. See Note:62143.1. 
+If there is a blocking scenario collect evidence as described in Finding blockers above and contact 
+Oracle support.   
+      </description>
+      <event-group> libcache </event-group>
+    </wait-event>
+       
+    <wait-event>
+      <event-name> queue messages </event-name>
+      <description> The server process waits for messages to dequeue </description>
+      <event-group> QUEUE </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> PL/SQL lock timer </event-name>
+      <description> This a session waiting on the dbms_lock.sleep() call </description>
+      <event-group> SQL*Net </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> gc cr multi block request </event-name>
+      <description> Indicates that we are shipping datablocks across the RAC interconnect </description>
+      <event-group> IO1 </event-group>
+    </wait-event>
+      
+    <wait-event>
+      <event-name> control file parallel write </event-name>
+      <description>This event occurs while the session is writing physical blocks to all control files. This happens when:
+
+      The session starts a control file transaction (to make sure that the control files are up to date in case the session crashes before committing the control file transaction) 
+      The session commits a transaction to a control file 
+      Changing a generic entry in the control file, the new value is being written to all control files 
+      Wait Time: The wait time is the time it takes to finish all writes to all control files
+      </description>
+      <event-group> CF </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> control file sequential read </event-name>
+      <description>Reading from the control file. This happens in many cases. For example, while:
+
+      Making a backup of the controlfiles 
+      Sharing information (between instances) from the controlfile 
+      Reading other blocks from the controlfiles 
+      Reading the header block 
+      Wait Time: The wait time is the elapsed time of the read
+      </description>
+      <event-group> CF </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> library cache load lock </event-name>
+      <description>The session tries to find the load lock for the database object so that it can load the object. The load lock is always obtained in Exclusive mode, so that no other process can load the same object. If the load lock is busy the session will wait on this event until the lock becomes available.
+      
+      Wait Time: 3 seconds (1 second for PMON)
+      </description>
+      <event-group></event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> db file scattered read </event-name>
+      <description> 
+This event signifies that the user process is reading buffers into the SGA buffer cache and is waiting for a 
+physical I/O call to return. A db file scattered read issues a scatter-read to read the data into multiple 
+discontinuous memory locations. A scattered read is usually a multiblock read. It can occur for a fast full 
+scan (of an index) in addition to a full table scan.  The db file scattered read wait event identifies that 
+a full table scan is occurring. When performing a full table scan into the buffer cache, the blocks read 
+are read into memory locations that are not physically adjacent to each other. Such reads are called 
+scattered read calls, because the blocks are scattered throughout memory. This is why the corresponding 
+wait event is called 'db file scattered read'. Multiblock (up to DB_FILE_MULTIBLOCK_READ_COUNT blocks) reads 
+due to full table scans into the buffer cache show up as waits for 'db file scattered read'.
+      </description>
+      <event-group> IO1 </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> ARCH wait on SENDREQ </event-name>
+      <description> This indicates that the archiver is writing to a remote log destination </description>
+      <event-group> ARCH </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> log file sync </event-name>
+      <description> 
+When a user session commits, the session's redo information needs to be flushed to the redo logfile. 
+The user session will post the LGWR to write the log buffer to the redo log file. 
+When the LGWR has finished writing, it will post the user session.
+
+Wait Time: The wait time includes the writing of the log buffer and the post.
+
+Parameter:
+
+buffer#
+ The number of the physical buffer in the redo log buffer that needs to be synchronized
+ </description>
+      <event-group> REDO </event-group>
+    </wait-event>
+
+    <wait-event>
+      <event-name> db file sequential read </event-name>
+      <description> 
+The session waits while a sequential read from the database \x000D\x000A is performed. <BR></BR>
+This event is also used for rebuilding the control file, dumping datafile headers, and getting the database file headers.
+Usually, waiting on an index read or the table access as a result of an index read. 
+      </description>
+      <event-group> IO1 </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> gc current request </event-name>
+      <description> 
+RAC distributed block read 
+      </description>
+      <event-group> RAC1 </event-group>
+    </wait-event>
+
+    <wait-event>
+      <event-name> latch free </event-name>
+      <description> The process waits for a latch that is currently busy (held by another process). </description>
+      <event-group> LATCH </event-group>
+    </wait-event>
+
+    <wait-event>
+      <event-name> direct path read </event-name>
+      <description> 
+During Direct Path operations the data is asynchronously read from the database files. 
+      </description>
+      <event-group> IO1 </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> direct path write </event-name>
+      <description> 
+During Direct Path operations, the data is asynchronously written to the database files. 
+At some stage the session needs to make sure that all outstanding asynchronous I/O have been completed to disk. 
+This can also happen if, during a direct write, no more slots are available to store outstanding load requests 
+(a load request could consist of multiple I/Os).
+
+Wait Time: 10 seconds. The session will be posted by the completing asynchronous I/O. It will never wait the entire 10 seconds. The session waits in a tight loop until all outstanding I/Os have completed.
+
+Parameters:
+
+descriptor address
+ This is a pointer to the I/O context of outstanding direct I/Os on which the session is currently waiting
+ 
+first dba
+ The dba of the oldest I/O in the context referenced by the descriptor address
+ 
+block cnt
+ Number of valid buffers in the context referenced by the descriptor address
+ 
+      </description>
+      <event-group> IO1 </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> buffer busy waits </event-name>
+      <description> 
+Wait until a buffer becomes available. This event happens because a buffer is either being read into the 
+buffer cache by another session (and the session is waiting for that read to complete) or the buffer is the buffer cache, 
+but in a incompatible mode (that is, some other session is changing the buffer).
+
+P3 (reason codes)
+
+  100 - We want to NEW the block but the block is currently being read by another session (most likely for undo).
+  200 - We want to NEW the block but someone else has is using the current copy so we have to wait for them to finish.
+  230 - Trying to get a buffer in CR/CRX mode , but a modification has started on the buffer that has not yet been completed.
+  231 - CR/CRX scan found the CURRENT block, but a modification has started on the buffer that has not yet been completed.
+  130 - Block is being read by another session and no other suitable block image was found, so we wait until the read 
+	    is completed. This may also occur after a buffer cache assumed deadlock. The kernel can't
+        get a buffer in a certain amount of time and assumes a deadlock. Therefor it will read the CR version of the block.
+  110 - We want the CURRENT block either shared or exclusive but the Block is being read into cache by another session, 
+	    so we have to wait until their read() is completed.
+  120 - We want to get the block in current mode but someone else is currently reading it into the cache. Wait for them
+	    to complete the read. This occurs during buffer lookup.
+  210 - The session wants the block in SCUR or XCUR mode.  If this is a buffer exchange or the session is in discrete 
+	    TX mode, the session waits for the first time and the second time escalates the block as a deadlock and so does not show
+	    up as waiting very long.  In this case the statistic: "exchange deadlocks" is incremented and we yield the 
+	    CPU for the "buffer deadlock" wait event.
+
+  220 - During buffer lookup for a CURRENT copy of a buffer we have found the buffer but someone holds it in an incompatible mode
+	    so we have to wait.
+       
+Check for other processes that may have hung on some other resource while holding a buffer in the incompatible mode.
+
+Reducing Waits / Wait times:
+
+As buffer busy waits are due to contention for particular blocks then you cannot take any action until you know which 
+blocks are being competed for and why. Eliminating the cause of the contention is the best option. 
+Note that "buffer busy waits" for data blocks are often due to several processes repeatedly reading the same blocks 
+(eg: if lots of people scan the same index) - the first session processes the blocks that are in the buffer cache quickly 
+but then a block has to be read from disk - the other sessions (scanning the same index) quickly 'catch up' and want the 
+block which is currently being read from disk - they wait for the buffer as someone is already reading the block in. 
+
+The following hints may be useful for particular types of contention - these are things that MAY reduce contention 
+for particular situations: 
+
+Block Type Possible Actions 
+- data blocks 
+  Eliminate HOT blocks from the application. Check for repeatedly scanned / unselective indexes. Change PCTFREE and/or PCTUSED. 
+  Check for 'right- hand-indexes' (indexes that get inserted into at the same point by many processes). Increase INITRANS. 
+  Reduce the number of rows per block.  
+- segment header 
+  Increase of number of FREELISTs. Use FREELIST GROUPs (even in single instance this can make a difference).  
+- freelist blocks 
+  Add more FREELISTS. In case of Parallel Server make sure that each instance has its own FREELIST GROUP(s).  
+- undo header  
+  Add more rollback segments.  
+
+</description>
+
+      <event-group> IO1 </event-group>
+    </wait-event>
+
+    <wait-event>
+      <event-name> log file sequential read </event-name>
+      <description> Waiting for the read from this logfile to return. This is used to read redo records from the log file.</description>
+      <event-group> REDO </event-group>
+    </wait-event>
+
+    <wait-event>
+      <event-name> log file switch completion </event-name>
+      <description> 
+The session is waiting for a log switch to complete.  
+      	
+Until it completes, no redo generation will occur and session will wait on
+a log file switch wait event.  log buffer space waits may occur as a "burst" of 
+redo activity may occur after the log switch completes.
+      </description>
+      <event-group> REDO </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> log buffer space </event-name>
+      <description> 
+Waiting for space in the log buffer because the session is writing data into the log buffer faster than LGWR can write it out. 
+Consider making the log buffer bigger if it is small, or moving the log files to faster disks such as striped disks.
+
+Wait Time: Usually 1 second, but 5 seconds if it is waiting for a Switch Logfile to complete
+
+Parameters: None
+      </description>
+      <event-group> REDO </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> enqueue </event-name>
+      <description> The session is waiting for a local enqueue. The wait is dependent on the name of the enqueue.</description>
+      <event-group> ENQ </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> enq: TX - row lock contention </event-name>
+      <description> The session is waiting for a TX enqueue (row lock) </description>
+      <event-group> ENQ </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> DFS lock handle </event-name>
+      <description> Distributed Lock </description>
+      <event-group> ENQ </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> async disk IO  </event-name>
+      <description> Definition:
+Versions:9.0 - 9.2 Documentation: None 
+This is a general async IO completion wait used in a number of places in the code. The wait means that the Oracle process is waiting for either: 
+completion of 1 or more actual async IO's 
+response/s from IO Slave processes 
+In 9.0 the wait is used by DBW, LGWR, CKPT, ARCH, and for backups etc.. so does not give a useful indication of what the waits are related to. 
+
+In 9.2 a number of the wait scenarios have had their async IO waits reclassified under more meaningful wait events. The main situations using "async disk IO" in 9.2 are: 
+
+- Asynchronous log reads 
+- Trace write waits 
+- LGWR waits for pending i/o's during database shutdown due to standby database failure 
+- Archive log write waits when detaching rfs process. 
+
+Individual Waits:
+
+Parameters: 
+  P1 = count 
+  P2 = intr / aioflags 
+  P3 = timeout 
+
+Note: In 9.0 all parameters are shown as 0 if "intr" is false (0). 
+count Number of IO requests being waited for. 
+This is the number of IO requests we are waiting to complete. (or 0 in 9.0 if intr == 0) 
+
+intr / aioflags 9.0Interruptable    9.2 AIO Flags 
+
+In 9.0 this is non-zero if the process is also postable while waiting for the IOs to complete.
+
+In 9.2 this is a set of flags thus: 
+- 0x00 Wait for all IO types non interruptable 
+- 0x01 wait is interruptible 
+- 0x02 Ignore IOs submitted via the OSD interface 
+- 0x04 Ignore ODM IOs  
+- 0x08 Ignore OSM IOs 
+- 0x20 Wait for new i/o completions 
+
+timeout Timeout in centi-seconds 
+Timeout in centi-seconds. (or 0 in 9.0 if intr = 0)
+
+Wait Time: 
+  Waits for the requested number of IO completions, or until posted. 
+Finding Blockers: 
+  The blocker is the OS IO subsystem OR Oracle slave IO processes (which in turn are usually waiting on the OS IO subsystem). 
+Systemwide Waits:
+  In 9.0 the wait is used in a number of places so it can be difficult to see where the IO waits are occuring. 
+  v$session_event can be used to relate the waits to various Oracle processes (LGWR, CKPT etc..) to see what the waits are related to. 
+One can also look at: 
+  OS IO statistics 
+Reducing Waits / Wait times:
+The options for reducing the waits depend heavily on what the IO relates to. 
+  Find which type of IO the waits are for 
+  Check the IO loading at OS level 
+  Tune the relevant portion of the database / IO subsystem for the waits being seen 
+</description>
+      <event-group> ENQ </event-group>
+    </wait-event>
+
+    <wait-event>
+      <event-name> PX Deq: Table Q Normal </event-name>
+      <description> Waiting Processes:Slave
+Indicates that the slave wait  for data to arrive on its input table queue. In a parallel execution 
+environment we have a producer consumer model. One slave set  works on the data 
+( e.g.  read data from disk , do a join ) called the produces slave set and the other slave set waits 
+to get the data that the can start the work. The slaves in this slave set are called consumers. 
+The wait  event "PX Deq: Table Q Normal" means that the slaves in the consumer slave have to wait for 
+rows( data ) from the other slave set that they can start there work.</description>
+      <event-group> PQ </event-group>
+    </wait-event>
+    
+    <wait-event>
+      <event-name> PX Deq Credit: send blkd </event-name>
+      <description> 
+Waiting Process: QC,Slave
+The process wishes to send a message and does not have the flow control credit. Process must first 
+dequeue a message to obtain the credit. Indicates that the receiver has not dequeued and/or completely 
+consumed the prior message yet.
+
+"PX Deq Credit: send blkd" and "PX Deq Credit: need buffer" are nearly the same. 
+Due to internal reason you see "PX Deq Credit: send blkd" more on local systems and 
+"PX Deq Credit: need buffer" more on RAC systems. </description>
+      <event-group> PQ </event-group>
+    </wait-event>
+      
+    <wait-event>
+      <event-name> PX Deq Credit: need buffer </event-name>
+      <description> 
+The slaves and the QC use table queue's for the communication. Each table queue uses buffer to 
+send data between two slaves or a slave and  the QC. A credit bit protects the table queue that 
+only one process ( slave /QC ) can send data. 
+There is one credit which protects the table queue's. A process needs the credit bit if it have to 
+send data via a table queue. The credit bit is send via a buffer from slave to slave or from a slave 
+to the QC. When we wait for "PX Deq Credit: need buffer" we wait for a buffer from the other slave /QC 
+that the we get the credit bit and can send a block. </description>
+      <event-group> PQ </event-group>
+    </wait-event>
+
+  </wait-events>
+  
+  <!-- ==================================================================================================================== -->
+  
+  <enqueues>
+  	
+    <enqueue>
+      <code>TX</code>
+      <name>Transaction</name>
+      <description>    
+These are acquired exclusive when a transaction initiates its first change and held until the transaction does a COMMIT or ROLLBACK.
+
+Waits for TX in mode 6: occurs when a session is waiting for a row level lock that is already held by another session. This occurs when one user is updating or deleting a row, which another session wishes to update or delete. 
+
+The solution is to have the first session already holding the lock perform a COMMIT or ROLLBACK.
+
+Waits for TX in mode 4 can occur if the session is waiting for an ITL (interested transaction list) slot in a block. This happens when the session wants to lock a row in the block but one or more other sessions have rows locked in the same block, and there is no free ITL slot in the block. Usually, Oracle dynamically adds another ITL slot. This may not be possible if there is insufficient free space in the block to add an ITL. If so, the session waits for a slot with a TX enqueue in mode 4. 
+
+The solution is to increase the number of ITLs available, either by changing the INITTRANS or MAXTRANS for the table (either by using an ALTER statement, or by re-creating the table with the higher values).
+
+Waits for TX in mode 4 can also occur if a session is waiting due to potential duplicates in UNIQUE index. If two sessions try to insert the same key value the second session has to wait to see if an ORA-0001 should be raised or not. 
+
+The solution is to have the first session already holding the lock perform a COMMIT or ROLLBACK.
+
+Waits for TX in mode 4 is also possible if the session is waiting due to shared bitmap index fragment. Bitmap indexes index key values and a range of ROWIDs. Each 'entry' in a bitmap index can cover many rows in the actual table. If two sessions want to update rows covered by the same bitmap index fragment, then the second session waits for the first transaction to either COMMIT or ROLLBACK by waiting for the TX lock in mode 4. 
+Waits for TX in Mode 4 can also occur waiting for a PREPARED transaction.
+     </description>
+    </enqueue>
+    
+    <enqueue>
+      <code>ST</code>
+      <name>Space Management</name>
+      <description>
+If the contended-for enqueue is the ST enqueue, then the problem is most likely to be dynamic space allocation. Oracle dynamically allocates an extent to a segment when there is no more free space available in the segment. This enqueue is only used for dictionary managed tablespaces.
+
+To solve contention on this resource:
+
+Check to see whether the temporary (that is, sort) tablespace uses TEMPFILES. If not, then switch to using TEMPFILES. 
+Switch to using locally managed tablespaces if the tablespace that contains segments that are growing dynamically. 
+
+See Also: 
+Oracle9i Database Concepts for detailed information on TEMPFILEs and locally managed tablespaces
+ 
+
+If it is not possible to switch to locally managed tablespaces, then ST enqueue resource usage can be decreased by changing the next extent sizes of the growing objects to be large enough to avoid constant space allocation. To determine which segments are growing constantly, monitor the EXTENTS column of the DBA_SEGMENTS view for all SEGMENT_NAMEs over time to identify which segments are growing and how quickly. 
+Preallocate space in the segment (for example, by allocating extents using the ALTER TABLE ALLOCATE EXTENT SQL statement). 
+      </description>
+    </enqueue>
+    
+    <enqueue>
+      <code>TM</code>
+      <name>Foriegn Key</name>
+      <description>
+The most common reason for waits on TM locks tend to involve foreign key constraints where the constrained columns are not indexed. Index the foreign key columns to avoid this problem.
+
+More on TM
+------------
+
+DML (Table) enqueue. Every time a session wants to lock a table, a TM enqueue is requested. If a session deletes a row in the parent-table   (DEPT) and a referential constraint (foreign key) is created without   an index on the child-table (EMP), or if the session is updating the   column(s) that the foreign key references to then a share lock (level 4)   is taken on the child table. If another session tries to do changes to the child-table they have to wait (because they want the enqueue in row exclusive mode, and that is not compatible with the share mode). If an index is created on the child-table's foreign key-column, then no share-lock is required on the child-table. 
+
+      </description>
+    </enqueue>
+    
+    <enqueue>
+      <code>US</code>
+      <name>Undo Segment</name>
+      <description>
+Wait on an undo segment header
+      </description>
+    </enqueue>
+    
+    <enqueue>
+      <code>JI</code>
+      <name> MV Refresh </name>
+      <description>
+Waiting on MV Refresh Contention
+      </description>
+    </enqueue>
+    
+    <enqueue>
+      <code>BL</code>
+      <name> Buffer Cache Management </name>
+      <description> .</description>
+    </enqueue>
+    
+    <enqueue>
+      <code> CF </code>
+      <name> Control File Management </name>
+      <description> .</description>
+    </enqueue>
+    
+    <enqueue>
+      <code> DX </code>
+      <name> Distributed Transaction </name>
+      <description> .</description>
+    </enqueue>
+    
+    <enqueue>
+      <code> CI </code>
+      <name> Cross-instance Call Invocation </name>
+      <description> 
+
+The "cross instance call" enqueue is used to invoke specific
+actions in background processes on a specific instance or all instances
+acquired on the fly as a particular call is requested.
+Examples include checkpoint, log switch,shutting down, identifying or
+re-identifying datafiles, etc.
+
+CONTENTION:
+~~~~~~~~~~
+The first stage in trying to reduce contention for this lock type is
+to determine what the call actually is. This can be done be examining the
+value for ID1 and then reference the Id1 with the operation associated
+in the "Meaning" column.
+
+NOTE: CI locks are not limited to Oracle Parallel server operations.
+The same locks are used as in a single Oracle instance. 
+
+Id1 Meaning
+~~~ ~~~~~~~
+0 Checkpoint block range<BR></BR>
+1 Reuse (checkpoint and invalidate) block range
+2 LGWR Checkpointing and Hot Backup
+3 DBWR syncronization of SGA with control file
+4 Log file add/drop/rename notification
+5 Write buffer for CR read
+6 Test call
+7 Invalidate KCK cache in all instances
+8 Alter rollback segment optimal
+9 Signal Query Servers/coordinator>
+10 Create Remote parallel query Server
+11 Set Global Partitions
+12 Stop Disk Writes
+13 Drop Sort Segments
+14 Release unused space from Sort Segments
+15 Instance Recovery for Parallel operation Group
+16 Validate parallel slave Lock Value
+17 Check transaction state objects
+18 Object reuse request
+19 Rolling release checks
+20 Propagate begin backup scn for a file
+21 Refresh top plan (for db scheduler)
+22 Clear checkpoint progress record
+23 Drop temp file
+24 Quiesce database Restricted 
+</description>
+    </enqueue>
+    
+  </enqueues>
+  
+  <!-- ==================================================================================================================== -->
+  
+  <eventgroups>
+  
+    <eventgroup>
+      <group-name> IO1 </group-name>
+      <description> IO Group with file and block id as parameters. Run this query to get the segment information </description>
+      <query>
+      select 'select distinct segment_name from dba_extents where file_id=' ||?||' and '||?||' between block_id and block_id+blocks' "Segment Query"
+        from dual 
+      </query>
+      <p1-count> 1 </p1-count>
+      <p2-count> 1 </p2-count>
+      <p3-count> 0 </p3-count>
+    </eventgroup>
+    
+    <eventgroup>
+      <group-name> RAC1 </group-name>
+      <description> RAC buffer waits with file and block ids. </description>
+      <query>
+      select distinct        t1.segment_name "Segment Name", 
+                             t1.owner "Owner", 
+                             t1.segment_type "Segment Type", 
+                             t1.partition_name "Partition", 
+                             t1.tablespace_name "Tablespace", 
+                             t2.file_name "File Name"  
+                from dba_extents t1, 
+                     dba_data_files t2
+                where t1.file_id = t2.file_id 
+                  and t1.file_id = ? 
+                  and ? between t1.block_id and t1.block_id + t1.blocks
+                  and ? >= -9999
+      </query>
+      <p1-count> 1 </p1-count>
+      <p2-count> 1 </p2-count>
+      <p3-count> 1 </p3-count>
+    </eventgroup>
+    
+    <eventgroup>
+      <group-name> QUEUE </group-name>
+      <description> QUEUE Group. </description>
+      <query>
+        select * from dba_queues where qid = ?
+      </query>
+      <p1-count> 1 </p1-count>
+      <p2-count> 0 </p2-count>
+      <p3-count> 0 </p3-count>
+    </eventgroup>
+    
+    <eventgroup>
+      <group-name> ENQ </group-name>
+      <description> Enqueue Wait Event Group. </description>
+      <query>
+      select chr(bitand(?,-16777216)/16777215)||chr(bitand(?, 16711680)/65535) "Code",        
+             decode(chr(bitand(?,-16777216)/16777215)||chr(bitand(?, 16711680)/65535),'TX','Transaction',
+                    chr(bitand(?,-16777216)/16777215)||chr(bitand(?, 16711680)/65535)) "Lock Type" ,
+             decode(bitand(?, 65536),'1','Null mode',
+                                     '2','Sub-Share',
+                                     '3','Sub-exclusive',
+                                     '4','Share',
+                                     '5','Share/Sub-Exclusive',
+                                     '6','Exclusive',
+                                     bitand(?, 65536)) "Lock Mode" from dual
+      </query>
+      <p1-count> 8 </p1-count>
+      <p2-count> 0 </p2-count>
+      <p3-count> 0 </p3-count>
+    </eventgroup>
+    
+    <eventgroup>
+      <group-name> IO2 </group-name>
+      <description> Group to Give Information about block/file wait events. Returns only the file name being accessed</description>
+      <query>
+      select df.file_id "File Id", df.file_name "File Name", ts.tablespace_name 
+        from dba_data_files df, dba_tablespaces ts
+        where df.tablespace_name = ts.tablespace_name
+          and df.file_id = to_number(?)  
+          and ? > -99 and ? > -99
+      </query>
+      <p1-count> 1 </p1-count>
+      <p2-count> 1 </p2-count>
+      <p3-count> 1 </p3-count>
+    </eventgroup>
+
+    <eventgroup>
+      <group-name> LATCH </group-name>
+      <description> Group to Give Information about Latch Wait Events.  A latch is a serialization mechanism used to lock an area in memory. </description>
+      <query>
+      select latch# "Latch#", name "Latch Name" from v$latchname where ? is not null and latch# = ? and ? > -1
+      </query>
+      <p1-count> 1 </p1-count>
+      <p2-count> 1 </p2-count>
+      <p3-count> 1 </p3-count>
+    </eventgroup>
+    
+    <eventgroup>
+      <group-name> SQL*Net </group-name>
+      <description> This is a SQL*Net Wait Event related to network activity </description>
+      <query></query>
+      <p1-count> 1 </p1-count>
+      <p2-count> 1 </p2-count>
+      <p3-count> 1 </p3-count>
+    </eventgroup>
+    
+    <eventgroup>
+      <group-name> Archiver </group-name>
+      <description> This is a Archiver Wait Event </description>
+      <query></query>
+      <p1-count> 1 </p1-count>
+      <p2-count> 1 </p2-count>
+      <p3-count> 1 </p3-count>
+    </eventgroup>
+    
+    <eventgroup>
+      <group-name> libcache </group-name>
+      <description> Library Cache </description>
+      <!--<query>SELECT kglnaown "Owner", kglnaobj "Object"
+               FROM x$kglob
+               WHERE kglhdadr=?</query>-->
+      <query></query>      
+      <p1-count> 1 </p1-count>
+      <p2-count> 1 </p2-count>
+      <p3-count> 1 </p3-count>
+    </eventgroup>
+    
+    <eventgroup>
+      <group-name> CFWRITE </group-name>
+      <description> Control File Write IO </description>
+      <query>select ? "Number of Control Files", ? "Number of blocks", ? "Number of IO Requests" from dual</query>
+      <p1-count> 1 </p1-count>
+      <p2-count> 1 </p2-count>
+      <p3-count> 1 </p3-count>
+    </eventgroup>  
+    
+    <eventgroup>
+      <group-name> REDO </group-name>
+      <description> Redo Log Related Event </description>
+      <query></query>
+      <p1-count> 1 </p1-count>
+      <p2-count> 1 </p2-count>
+      <p3-count> 1 </p3-count>
+    </eventgroup> 
+    
+    <eventgroup>
+      <group-name> PQ </group-name>
+      <description> Parallel Query </description>
+      <query>select bitand(?, 16711680) - 65535 as SNDRINST,
+    decode(bitand(?, 65535),65535, 'QC', 'P'||to_char(bitand(?, 65535),'fm000') ) as SNDR
+   from dual
+   where bitand(?, 268435456) = 268435456</query>
+      <p1-count> 4 </p1-count>
+      <p2-count> 0 </p2-count>
+      <p3-count> 0 </p3-count>
+    </eventgroup> 
+    
+    <eventgroup>
+      <group-name> TABLESPACE </group-name>
+      <description> Tablespace related, query is for the v$tablespace record </description>
+      <query>select * from v$tablespace where ts# = ? </query>
+      <p1-count> 0 </p1-count>
+      <p2-count> 1 </p2-count>
+      <p3-count> 0 </p3-count>
+    </eventgroup> 
+    
+  </eventgroups>
+  
+</eventinfo>

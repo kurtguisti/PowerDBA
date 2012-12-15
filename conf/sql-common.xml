@@ -1,0 +1,1072 @@
+<?xml version='1.0' encoding='windows-1252'?><powerdba-query-list>
+
+  <queries>
+    <query name="freespace_problems">
+      <title> Tablespaces Low on Space </title>
+      <name> freespace_problems </name>
+      <sql>  
+     select	a.TABLESPACE_NAME,
+	        a.BYTES meg_used,
+	        b.BYTES meg_free,
+	        round(((a.BYTES-b.BYTES)/a.BYTES)*100,2) percent_used
+       from 	
+	   (
+		select 	TABLESPACE_NAME,
+			sum(BYTES/1048576) BYTES 
+		from 	dba_data_files 
+		group 	by TABLESPACE_NAME
+	    )
+	    a,
+	    (
+		select TABLESPACE_NAME,
+			   sum(BYTES/1048576) BYTES 
+		  from 	dba_free_space 
+		  group by TABLESPACE_NAME
+	    )
+	    b
+     where round(((a.BYTES-b.BYTES)/a.BYTES)*100,2) > 90
+       and a.TABLESPACE_NAME=b.TABLESPACE_NAME
+     order by ((a.BYTES-b.BYTES)/a.BYTES) desc
+      </sql>
+    </query>
+    
+    <query name="queue_states">
+      <title> Messages by State </title>
+      <name> queue_states </name>
+      <sql>  
+select owner||'.'||name queue, waiting, ready, expired, total_wait, average_wait 
+  from v$aq t1, dba_queues t2
+  where t1.qid = t2.qid
+    and t2.owner not in ('SYS','SYSTEM','WKSYS','WMSYS','SYSMAN','IX')
+    and t2.owner || '.' || t2.name like '%' || ? || '%'
+  order by owner, name
+      </sql>
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> queue </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>   
+    </query>
+  
+    <query name="pga_detail">
+      <title> PGA Detail </title>
+      <name> pga_detail </name>
+      <sql>
+			select s.sid, s.module current_module, s.action current_action, s.machine, to_char(se1.value,'999,999,999') pga, to_char(se2.value,'999,999,999') uga, round((se2.value/se1.value),4)*100 uga_ratio
+			from (select sid, value from v$sesstat ss, v$statname sn where ss.statistic# = sn.statistic# and sn.name = 'session pga memory') se1,
+			     (select sid, value from v$sesstat ss, v$statname sn where ss.statistic# = sn.statistic# and sn.name = 'session uga memory') se2,
+			     v$session s
+			where s.sid     = se1.sid
+			  and s.sid     = se2.sid
+			  and s.module like ?
+			  and s.machine like ?
+			order by se1.value desc
+      </sql>
+      <bind-variables> 
+          <var>
+            <position> 1 </position>
+            <name> module </name>
+            <default-value> % </default-value>
+          </var>   
+          <var>
+            <position> 2 </position>
+            <name> machine </name>
+            <default-value> % </default-value>
+          </var>   
+       </bind-variables>
+    </query>
+    
+    <query name="all_transactions">
+      <title> Transactions </title>
+      <name> all_transactions </name>
+      <rac-enabled> Y </rac-enabled>
+      <sql>
+select to_char(((sysdate - t.start_date)*24*60),'999.99') minutes_open, t.start_scn, t.log_io, 
+       t.phy_io, t.cr_get, t.cr_change, 
+       t.xidusn, t.xidslot, t.xidsqn, 
+       s.sid, 
+       s.username, s.osuser, s.command, s.program, s.machine, s.event , vs.sql_text last_sql
+  from v$transaction t,
+       v$session s,
+       v$sql vs
+  where t.ses_addr = s.saddr (+)
+    and s.sql_id = vs.sql_id (+) 
+  order by 1 desc
+      </sql>
+      <links>
+        <link>
+          <action> DB_SESS_ZOOM </action>
+          <column> sid </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+          </linkvars>
+        </link> 
+      </links>   
+    </query>
+  
+    <query name="odm_memory">
+      <title> Memory </title>
+      <name> odm_memory </name>
+      <sql>
+			select module, 
+			       machine, 
+			       session_count, 
+			       to_char(pga,'999,999,999,999') pga, 
+			       to_char(avg_pga,'999,999,999,999') avg_pga, 
+			       to_char(pct_of_total,'999.99') pct_of_total
+			  from odm_session_history
+			  where snap_id = ?
+			  order by 1,2
+      </sql> 
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> snap_id </name>
+        </var>
+      </bind-variables>       
+    </query>
+    
+    <query name="registered_logs">
+      <title> Registered Logs </title>
+      <name> registered_logs </name>
+      <sql>
+			select --c.lscn "Required Checkpoint SCN",
+			       consumer_name, 
+			       source_database, 
+			       thread#,
+			       sequence#, 
+			       --first_scn, 
+			       --next_scn, 
+			       first_time,
+			       next_time,
+                   case when c.lscn between t.first_scn and t.next_scn then 'XXX'
+			            else ''
+			       end "Min Log", 
+			       name, 
+			       modified_time,
+			       dictionary_begin dict_begin, 
+			       dictionary_end dict_end
+		      from dba_registered_archived_log t,
+			       (select min(required_checkpoint_scn) lscn from dba_capture) c
+      </sql>       
+    </query>
+  
+    <query name="memory">
+      <title> Memory </title>
+      <name> memory </name>
+      <sql>
+select decode(decode(module,'JDBC Connect Client',module || '-' || s.username, module),
+       null,'Unknown Module',decode(module,'JDBC Connect Client',module || '-' || s.username, module)) module, 
+       machine, count(*) session_count, to_char(sum(pga_alloc_mem),'999,999,999,999') pga,
+       to_char(avg(pga_alloc_mem),'999,999,999,999') avg_pga, to_char(
+round( ( sum(pga_alloc_mem)/(select sum(pga_alloc_mem) ttl
+  from v$process p))*100,2),'999.99') pct_of_total
+  from v$process p, v$session s
+  where s.paddr = p.addr
+  group by decode(decode(module,'JDBC Connect Client',module || '-' || s.username, module),null,'Unknown Module',decode(module,'JDBC Connect Client',module || '-' || s.username, module)), machine
+  order by 1,2
+      </sql>        
+    </query>
+    
+    <query name="memory_by_machine">
+      <title> Memory </title>
+      <name> memory_by_machine </name>
+      <sql>
+select machine, count(*) session_count, to_char(sum(pga_alloc_mem),'999,999,999,999') pga 
+  from v$process p, v$session s 
+  where s.paddr = p.addr 
+  group by machine
+  order by machine
+      </sql>        
+    </query>
+    
+    <query name="apply_errors">
+      <title> Apply Errors </title>
+      <name> apply_errors </name>
+      <sql>
+select * from dba_apply_error where apply_name like ? order by source_commit_scn
+      </sql> 
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> applyproc </name>
+        </var>
+      </bind-variables>  
+      <links>
+        <link>
+          <action> DB_STREAMS_TRX </action>
+          <column> local_transaction_id </column>
+          <linkvars>
+            <var>
+              <varname> streamstrx </varname>
+              <from-column> local_transaction_id </from-column>
+            </var>
+          </linkvars>
+        </link> 
+      </links>                
+    </query>
+    
+    <query name="lcr_shredders">
+      <title> Shredders </title>
+      <name> lcr_shredders </name>
+      <sql>
+select * from strm_admin.lcr_shredders order by table_owner, table_name, shredder
+      </sql>
+
+    </query>
+    
+    <query name="memory_summary">
+      <title> Memory Summary </title>
+      <name> memory_summary </name>
+      <sql>
+select to_char(sum(pga_alloc_mem),'999,999,999,999') total_pga, count(s.sid) session_count
+  from v$process p, v$session s 
+  where s.paddr = p.addr  
+      </sql>
+
+    </query>
+
+
+    <query name="freespace">
+      <title> Freespace </title>
+      <name> freespace </name>
+      <sql>
+select a.tablespace_name "Tablespace",                                      
+                        round(a.bytes/(1024*1024),2) "Capacity",                          
+                        round(b.bytes/(1024*1024),2) "Free Space",                                         
+                        round((a.bytes-b.bytes)/(1024*1024),2) "Used Space",                            
+                        round((b.bytes/a.bytes)*100,0) "Pct Free",                              
+                        round(d.bytes/(1024*1024),2) "Analyzed",                                          
+                        round(max_next_extent/(1024*1024),2) "Lgst Next Ext",                      
+                        round(lgstcont/(1024*1024)) "Lgst Cont Ext",                               
+                        fs_extents "Free Extents",                                                 
+                        total_extents "Total Extents",                                             
+                        decode(least(b.lgstcont,max_next_extent),b.lgstcont,'***',null) "Space Problem"   
+                      from (select tablespace_name,sum(bytes) bytes from dba_data_files group by tablespace_name) a, 
+                           (select tablespace_name,max(bytes) lgstcont, sum(bytes) bytes, count(*) fs_extents from dba_free_space group by tablespace_name) b,  
+                           (select tablespace_name,max(next_extent) max_next_extent, sum(extents) total_extents from dba_segments group by tablespace_name) c,  
+                           (select tablespace_name,sum(num_rows*avg_row_len) bytes from dba_tables group by tablespace_name) d  
+                      where a.tablespace_name = b.tablespace_name (+)  
+                        and b.tablespace_name = c.tablespace_name (+)     
+                        and c.tablespace_name = d.tablespace_name (+)    
+                     order by 11 asc, 5 asc 
+      </sql>  
+      <links>      
+        <link>
+          <action> DB_TS </action>
+          <column> tablespace </column>
+          <linkvars>
+            <var>
+              <varname> ts </varname>
+              <from-column> tablespace </from-column>
+            </var>
+          </linkvars>
+        </link>  
+      </links>   
+    </query>
+  	
+    <query name="hidden_parms">
+      <title> Hidden Parameters </title>
+      <name> hidden_parms </name>
+      <sql>
+         select * from sys.x$ksppi    
+      </sql>      
+    </query>
+    
+    <query name="most_executed">
+      <title> Most Executed SQL </title>
+      <name> most_executed </name>
+      <sql>
+         select      
+             u.username, 
+			 sa.address, 
+			 sa.hash_value, 
+			 substr(sa.sql_text,1,80) "SQL",
+			 'Explain' "explain",  
+			 decode(s.hash_value, null, '', 'SQL Area') "sql area", 
+			 decode(sps.hash_value, null, '', 'Runtime Plan') "runtime plan", 
+			 to_char(round(decode(s.executions,0,0,max(s.buffer_gets/decode(s.executions,0,.0000001,s.executions))),0),'999,999,999,999') "Avg Buffer Gets", 
+			 to_char(sum(s.executions),'999,999,999,999') "Execs", 
+			 to_char(sum(s.parse_calls),'999,999,999,999') "Parses", 
+			 round(decode(s.executions,0,0,(sum(s.parse_calls)/sum(decode(s.executions,0,.0000001,s.executions)))*100),2) "Parse Ratio"
+             from v$sqlarea sa,          
+                  v$sql_plan_statistics sps, 
+                  v$sql s, 
+                  dba_users u 
+             where sa.hash_value = sps.hash_value (+) 
+               and sa.hash_value = s.hash_value (+) 
+               and sa.address    = s.address (+) 
+               and sa.parsing_user_id = u.user_id 
+               and s.buffer_gets is not null 
+               and s.executions > 1000 
+            group by s.executions, 
+                     s.buffer_gets, 
+                     u.username, 
+                     sa.address, 
+                     sa.hash_value, 
+                     substr(sa.sql_text,1,80), 
+                     s.hash_value, 
+                     sps.hash_value 
+             order by sum(s.executions) desc    
+      </sql>
+        
+      <links>      
+        <link>
+          <action> DB_SQL_TEXT </action>
+          <column> sql </column>
+          <linkvars>
+            <var>
+              <varname> hash </varname>
+              <from-column> hash_value </from-column>
+            </var>
+          </linkvars>
+        </link>
+        <link>
+          <action> EXPLAIN_PLAN </action>
+          <column> explain </column>
+          <linkvars>
+            <var>
+              <varname> hash </varname>
+              <from-column> hash_value </from-column>
+            </var>
+          </linkvars>
+        </link>
+        <link>
+          <action> DB_SQL_CHILDREN </action>
+          <column> sql area </column>
+          <linkvars>
+            <var>
+              <varname> hash </varname>
+              <from-column> hash_value </from-column>
+            </var>
+            <var>
+              <varname> address </varname>
+              <from-column> address </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links>
+      
+      <hiddens>
+      	<hidden column-name="address"/>
+      	<hidden column-name="hash_value"/>
+      </hiddens>
+    
+    </query>
+  					  
+    <query name="all_schemas">
+      <title> All Schemas </title>
+      <name> all_schemas </name>
+      <sql>
+             select username, 
+                    'Objects' objects, 
+                    'Roles' roles,
+                    'Direct Grants' grants, 
+                    'Sys Privs' privs,
+                    'Table Changes' changes,
+                    'Table Statistics' stats, 
+                    default_tablespace,
+                    temporary_tablespace, 
+                    initial_rsrc_consumer_group "Resource Group"   
+               from dba_users 
+               where username like ? || '%'
+			 union all 
+			 select 'PUBLIC', 
+			        'Objects' " ", 
+			        'Roles' " ", 
+			        'Direct Grants' " ", 
+			        'Sys Privs' " ", 
+			        '',
+			        '', 
+			        '',
+			        '', 
+			        '' "Resource Group"
+			   from dual 
+			   where ? = 'P' or ? = '%'
+			   order by 1      
+      </sql>  
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> firstletter </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> firstletter </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 3 </position>
+          <name> firstletter </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>     
+
+      <links>      
+        <link>
+          <action> DB_OBJECT_SUMMARY </action>
+          <column> objects </column>
+          <linkvars>
+            <var>
+              <varname> username </varname>
+              <from-column> username </from-column>
+            </var>
+          </linkvars>
+        </link> 
+        <link>
+          <action> DB_ROLES_ASSIGNED </action>
+          <column> roles </column>
+          <linkvars>
+            <var>
+              <varname> username </varname>
+              <from-column> username </from-column>
+            </var>
+          </linkvars>
+        </link>  
+        <link>
+          <action> DB_DIRECT_GRANTS </action>
+          <column> grants </column>
+          <linkvars>
+            <var>
+              <varname> username </varname>
+              <from-column> username </from-column>
+            </var>
+          </linkvars>
+        </link> 
+        <link>
+          <action> DB_TAB_MODIFICATIONS </action>
+          <column> changes </column>
+          <linkvars>
+            <var>
+              <varname> username </varname>
+              <from-column> username </from-column>
+            </var>
+          </linkvars>
+        </link> 
+        <link>
+          <action> DB_TAB_STATISTICS </action>
+          <column> stats </column>
+          <linkvars>
+            <var>
+              <varname> username </varname>
+              <from-column> username </from-column>
+            </var>
+          </linkvars>
+        </link> 
+        <link>
+          <action> DB_SYS_PRIVS </action>
+          <column> privs </column>
+          <linkvars>
+            <var>
+              <varname> grantee </varname>
+              <from-column> username </from-column>
+            </var>
+          </linkvars>
+        </link> 
+        <link>
+          <action> DB_FILES </action>
+          <column> default_tablespace </column>
+          <linkvars>
+            <var>
+              <varname> ts </varname>
+              <from-column> default_tablespace </from-column>
+            </var>
+          </linkvars>
+        </link>                  
+      </links>  
+      
+    </query>
+    
+    <query name="schemas_w_objects">
+      <title> Schemas w/objects </title>
+      <name> schemas_w_objects </name>
+      <sql>
+             select username, 
+                    'Objects' objects, 
+                    'Roles' roles,
+                    'Direct Grants' grants, 
+                    'Sys Privs' privs, 
+                    default_tablespace,
+                    temporary_tablespace, 
+                    initial_rsrc_consumer_group "Resource Group"   
+               from dba_users u 
+               where (select count(*) from dba_objects where owner = u.username) > 0
+			 union all 
+			 select 'PUBLIC', 
+			        'Objects' " ", 
+			        'Roles' " ", 
+			        'Direct Grants' " ", 
+			        'Sys Privs' " ", 
+			        '' , 
+			        '', 
+			        '' "Resource Group"
+			   from dual order by 1      
+      </sql>      
+      
+      <links>      
+        <link>
+          <action> DB_OBJECT_SUMMARY </action>
+          <column> objects </column>
+          <linkvars>
+            <var>
+              <varname> username </varname>
+              <from-column> username </from-column>
+            </var>
+          </linkvars>
+        </link> 
+        <link>
+          <action> DB_ROLES_ASSIGNED </action>
+          <column> roles </column>
+          <linkvars>
+            <var>
+              <varname> username </varname>
+              <from-column> username </from-column>
+            </var>
+          </linkvars>
+        </link>  
+        <link>
+          <action> DB_DIRECT_GRANTS </action>
+          <column> grants </column>
+          <linkvars>
+            <var>
+              <varname> username </varname>
+              <from-column> username </from-column>
+            </var>
+          </linkvars>
+        </link> 
+        <link>
+          <action> DB_SYS_PRIVS </action>
+          <column> privs </column>
+          <linkvars>
+            <var>
+              <varname> grantee </varname>
+              <from-column> username </from-column>
+            </var>
+          </linkvars>
+        </link> 
+        <link>
+          <action> DB_FILES </action>
+          <column> default_tablespace </column>
+          <linkvars>
+            <var>
+              <varname> ts </varname>
+              <from-column> default_tablespace </from-column>
+            </var>
+          </linkvars>
+        </link>                  
+      </links>  
+      
+    </query>
+
+    
+    <query name="waithistory">
+      <title> Wait History </title>
+      <name> waithistory </name>
+      <sql>
+          select 'Current-> ' seq#, event, p1text, p1, rawtohex(p1raw) p1raw, p2text, p2, rawtohex(p2raw) p2raw, p3text, p3, rawtohex(p3raw) p3raw, wait_time, state from v$session_wait where sid = ?
+      </sql>      
+
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> sid </name>
+        </var>
+      </bind-variables> 
+      
+      <links>      
+        <link>
+          <action> DB_WAIT_DETAIL </action>
+          <column> event </column>
+          <linkvars>
+            <var>
+              <varname> event </varname>
+              <from-column> event </from-column>
+            </var>
+            <var>
+              <varname> p1 </varname>
+              <from-column> p1 </from-column>
+            </var>
+            <var>
+              <varname> p2 </varname>
+              <from-column> p2 </from-column>
+            </var>
+            <var>
+              <varname> p3 </varname>
+              <from-column> p3 </from-column>
+            </var>
+          </linkvars>
+        </link>            
+      </links>  
+      
+    </query>
+    
+    <query name="backgroundsessions">
+      <title> Background Sessions </title>
+      <name> backgroundsessions </name>
+      <sql>
+          select vs.sid "Sid", 
+                 vs.serial# "Ser#", 
+                 status "Status", 
+                 lower(vs.username) "Ora User", 
+                 lower(vs.module)  || ' ' || lower(vs.action) "App Info", 
+                 vs.osuser "OS User", 
+                 vbg.name "Name",
+                 vbg.description "Description",
+                 vs.program "Program",
+                 vp.spid "Server Pid",  
+                 decode(vs.command, 0, ' ', 2,'Insert',3,'Select',6,'Update',45,'Rollback',7,'Delete',47,'Pl/sql',62,'Analyze',vs.command) "Cmd", 
+                 vsw.event "Current Wait Event",  
+                 vsw.p1 "P1",  
+                 vsw.p2 "P2",  
+                 vsw.p3 "P3"
+              from v$session vs, 
+                   v$process vp, 
+                   v$bgprocess vbg, 
+                   v$session_wait vsw
+              where vs.paddr = vp.addr     
+                and vbg.paddr (+) = vp.addr       
+                and vs.sid   = vsw.sid     
+                and (vs.type = 'BACKGROUND' or vs.username is null)
+              order by vs.status
+      </sql>
+      
+      <bind-variables></bind-variables>      
+      <links>
+        <link>
+          <action> DB_SESS_ZOOM </action>
+          <column> sid </column>
+          <desc> Get Session Detail </desc>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+          </linkvars>
+        </link>
+        <link>
+          <action> DB_WAIT_DETAIL </action>
+          <column> Current Wait Event </column>
+          <desc> Get Detailed Wait Event Information </desc>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+            <var>
+              <varname> event </varname>
+              <from-column> Current Wait Event </from-column>
+            </var>
+            <var>
+              <varname> p1 </varname>
+              <from-column> p1 </from-column>
+            </var>
+            <var>
+              <varname> p2 </varname>
+              <from-column> p2 </from-column>
+            </var>
+            <var>
+              <varname> p3 </varname>
+              <from-column> p3 </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links>
+        
+    </query>
+    
+    <query name="blockers">
+      <title> Blockers </title>
+      <name> blockers </name>
+      <sql>
+          SELECT blocking_sid, num_blocked 
+            FROM ( SELECT blocking_sid, SUM(num_blocked) num_blocked
+            FROM ( SELECT l.id1, l.id2,
+                          MAX(DECODE(l.block, 1, i.instance_name||'-'||l.sid, 
+                          2, i.instance_name||'-'||l.sid, 0 )) blocking_sid,
+                          SUM(DECODE(l.request, 0, 0, 1 )) num_blocked
+                    FROM gv$lock l, gv$instance i
+                    WHERE ( l.block!= 0 OR l.request > 0 ) AND 
+                            l.inst_id = i.inst_id 
+                            GROUP BY l.id1, l.id2)
+            GROUP BY blocking_sid 
+            ORDER BY num_blocked DESC) 
+            WHERE num_blocked != 0
+      </sql>
+        
+    </query>
+    
+    <query name="sysstat">
+      <title> System Stats </title>
+      <name> sysstat </name>
+      <sql>
+          select class, name, value from v$sysstat where value != 0 order by class, name
+      </sql>  
+      <data-type> 1 </data-type>      
+    </query>
+    
+    <query name = "dbfiles">
+      <title> Database Files </title>
+      <name> dbfiles </name>
+      <sql>
+          select * from dba_data_files where tablespace_name = ? order by tablespace_name
+      </sql>  
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> ts </name>
+        </var>
+      </bind-variables> 
+      <links></links>        
+    </query>
+    
+    <query name="buffercache">
+      <title> Buffer Cache </title>
+      <name> buffercache </name>
+      <sql>
+			select bh.file#, count(*) "Number of Buffers" 
+			  from v$bh bh
+			  group by bh.file# 
+			  order by 2 desc
+      </sql>  
+      <bind-variables></bind-variables> 
+      <links>
+        <link>
+          <action> DB_FILE </action>
+          <column> file# </column>
+          <desc> Get File Detail </desc>
+          <linkvars>
+            <var>
+              <varname> fileid </varname>
+              <from-column> file# </from-column>
+            </var>
+          </linkvars>
+        </link>
+      
+      </links>        
+    </query>
+
+    <query name="buffercacheseg">
+      <title> Buffer Cache Segments </title>
+      <name> buffercacheseg </name>
+      <sql>   
+SELECT o.owner, 
+       o.OBJECT_NAME, 
+       o.OBJECT_TYPE,
+       COUNT(*) NUMBER_OF_BLOCKS, 
+       s.blocks blocks_in_segment, 
+       to_char(100*(count(*)/s.blocks),'999.99') pct_cached, 
+       to_char(100*(count(*)/buffers.cnt),'999.99') pct_of_cache,
+       s.bytes bytes_in_segment
+     FROM DBA_OBJECTS o, V$BH bh, dba_segments s, (select count(*) cnt from v$bh) buffers
+    WHERE o.DATA_OBJECT_ID = bh.OBJD
+      and o.object_name = s.segment_name
+      and o.owner = s.owner
+      and o.object_type = s.segment_type
+      AND o.OWNER NOT IN ('SYS', 'SYSTEM', 'SYSMAN', 'XDB', 'IX', 'WMSYS', 'CTXSYS')
+    GROUP BY o.OBJECT_NAME, o.OWNER, o.OBJECT_TYPE, s.blocks, s.bytes, buffers.cnt
+    ORDER BY count(*) desc
+      </sql>        
+    </query>
+    
+    <query name="librarycache">
+      <title> Library Cache </title>
+      <name> librarycache </name>
+      <sql>
+          select * from v$librarycache
+      </sql>         
+    </query>
+    
+    <query name="mviewlogdependencies">
+      <title> Mview Dependencies </title>
+      <name> mviewlogdependencies </name>
+      <sql>
+          select snapsite "Client Site", sowner || '.' || snapname "Client Mview", snapshot_id, query_txt from sys.reg_snap$ order by snapsite, sowner
+      </sql>         
+    </query>
+    
+    <query name="mviews">
+      <title> Mviews </title>
+      <name> mviews </name>
+      <sql>
+          select 'MATERIALIZED VIEW' type, owner,mview_name,refresh_mode,refresh_method from dba_mviews order by owner
+      </sql> 
+      <links>
+        <link>
+          <action> DB_OBJECT_DETAIL </action>
+          <column> mview_name </column>
+          <desc> Mview Details </desc>
+          <linkvars>
+            <var>
+              <varname> owner </varname>
+              <from-column> owner </from-column>
+            </var>
+            <var>
+              <varname> type </varname>
+              <from-column> type </from-column>
+            </var>
+            <var>
+              <varname> objname </varname>
+              <from-column> mview_name </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links>          
+    </query>
+    
+    <query name="mviewlogs">
+      <title> Mview Logs </title>
+      <name> mviewlogs </name>
+      <sql>
+          select * from sys.slog$ order by mowner
+      </sql>         
+    </query>
+    
+    <query name="pqslaves">
+      <title> PQ Slaves </title>
+      <name> pqslaves </name>
+      <sql>
+          select * from v$pq_slave order by slave_name
+      </sql>         
+    </query>
+    
+    <query name="pqstats">
+      <title> PQ Stats </title>
+      <name> pqstats </name>
+      <sql>
+          select * from v$pq_sysstat
+      </sql>         
+    </query>
+    
+    <query name="pqsession">
+      <title> PQ Session </title>
+      <name> pqsession </name>
+      <sql>
+          select * from v$pq_sesstat
+      </sql>         
+    </query>
+    
+    <query name="pqtq">
+      <title> PQ Queue Stat </title>
+      <name> pqtq </name>
+      <sql>
+          select * from v$pq_tqstat
+      </sql>         
+    </query>
+    
+    <query name="parentlatches">
+      <title> Latches </title>
+      <name> parentlatches </name>
+      <sql>
+         select name, latch#,level#,wait_time,gets,misses,to_char(round(100*misses/decode(gets,0,.0000001,gets),4),'999.999') "% Miss", sleeps,immediate_gets,immediate_misses,
+           waiters_woken, waits_holding_latch, spin_gets, sleep1, sleep2 s2,
+           sleep3 s3, sleep4 s4, sleep5 s5, sleep6 s6, sleep7 s7, sleep8 s8, sleep9 s9, sleep10 s10, sleep11 s11
+           from v$latch order by latch#
+      </sql>  
+         
+      <links>
+        <link>
+          <action> DB_LATCH_CHILDREN </action>
+          <column> name </column>
+          <desc> Get Children </desc>
+          <linkvars>
+            <var>
+              <varname> latchnum </varname>
+              <from-column> latch# </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links>  
+
+    </query>
+    
+    <query name="longops">
+      <title> Long Operations </title>
+      <name> longops </name>
+      <sql>
+         select sid, 
+                username,
+                to_char(round(elapsed_seconds/60,2),'999,999.99') "Minutes Elapsed", 
+                to_char(round(time_remaining/60,2),'999,999.99') "Minutes Remaining",
+                to_char(round(sofar/totalwork*100,2))||'%' "Percent Complete",
+                to_char(sysdate + (time_remaining/60/60/24),'mm/dd/yyyy hh24:mi:ss') "Finish Time",
+                message
+           from v$session_longops t1
+           where time_remaining > 0
+           order by sid, sysdate + (time_remaining/60/60/24)
+      </sql>  
+         
+      <links>
+        <link>
+          <action> DB_SESS_ZOOM </action>
+          <column> sid </column>
+          <desc> Get Session Details </desc>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links>  
+
+    </query>
+    
+    <query name="longops_sid">
+      <title> Long Ops </title>
+      <name> longops_sid </name>
+      <sql>
+         select sid, 
+                username,
+                to_char(round(elapsed_seconds/60,2),'999,999.99') "Minutes Elapsed", 
+                to_char(round(time_remaining/60,2),'999,999.99') "Minutes Remaining",
+                to_char(round(sofar/totalwork*100,2))||'%' "Percent Complete",
+                to_char(sysdate + (time_remaining/60/60/24),'mm/dd/yyyy hh24:mi:ss') "Finish Time",
+                message         
+           from v$session_longops t1
+           where time_remaining > 0
+             and sid = ?
+           order by sid, sysdate + (time_remaining/60/60/24)
+      </sql>  
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> sid </name>
+        </var>
+      </bind-variables> 
+
+    </query>
+    <query name="trx_sid">
+      <title> Transactions </title>
+      <name> trx_sid </name>
+      <sql>
+         select start_time, 
+                log_io, 
+                phy_io, 
+                ubafil, 
+                ubablk, 
+                ubarec,
+                used_ublk "UBA Used"
+           from v$transaction 
+           where ses_addr = (select saddr from v$session where sid = ?)
+      </sql>      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> sid </name>
+        </var>
+      </bind-variables> 
+    </query>
+    
+    <query name="session_detail">
+      <title> Session Detail </title>
+      <name> session_detail </name>
+      <sql>
+                select
+                  t2.sid "Oracle SID", 
+                  t2.serial# "Serial#", 
+                  t2.username "Oracle Username", 
+                  t2.program "Client Program", 
+                  decode( to_char(t2.logon_time,'Day'), to_char(sysdate,'Day'), 'Today at ' || 
+                     to_char(t2.logon_time,'hh:mi:ssam'), 
+                         to_char(t2.logon_time,'Day mm/dd') || ' at ' || to_char(t2.logon_time,'hh:mi:ssam') ) "Login Time",  
+                  t3.pid "Oracle PID", 
+                  t3.spid "Server OS PID", 
+                  t2.osuser "OS User", 
+                  t2.resource_consumer_group "Resource Group", 
+                  t2.process "Client OS PID", 
+                  t2.status "Status", 
+                  t2.type, 
+                  t2.module, 
+                  t2.action, 
+                  t2.client_info,
+                  t2.failover_type,
+                  t2.failover_method,
+                  t2.failed_over,              
+                  t3.program "Client program", 
+                  t2.machine "Login Machine",  
+                  t2.pq_status, 
+                  t2.pdml_status,  
+                  t2.pddl_status, 
+                  to_char(pga_used_mem,'999,999,999') "PGA Used", 
+                  to_char(pga_alloc_mem,'999,999,999') "PGA Allocated", 
+                  to_char(t3.pga_freeable_mem,'999,999,999') "PGA Freeable", 
+                  to_char(t3.pga_max_mem,'999,999,999') "PGA Max",  
+                  decode(lck.sid,null,null,lck.job_id) "Job Id"
+                   from v$session t2, 
+                        v$process t3, 
+                       (select sid, id2 job_id from v$lock where type = 'JQ') lck 
+                   where t2.paddr = t3.addr 
+                     and lck.sid (+) = t2.sid                     
+                     and t2.sid = ?
+      </sql>      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> sid </name>
+        </var>
+      </bind-variables> 
+    </query>
+    
+   <query name="sessionsorts">
+      <title> Session Sorts </title>
+      <name> sessionsorts </name>
+      <sql>
+          select tablespace, segtype, contents, segfile#, to_char(blocks*value,'999,999,999,999') bytes from v$sort_usage,
+             v$parameter where name='db_block_size' and session_addr = 
+             (select saddr from v$session where sid = ?)
+      </sql>
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> sid </name>
+        </var>
+      </bind-variables>       
+      <links></links>      
+    </query>
+    
+   <query name="directories">
+      <title> Directories </title>
+      <name> directories </name>
+      <sql>
+          select * from dba_directories
+      </sql>    
+    </query>
+    
+   <query name="weblogicsessions">
+      <title> Weblogic Sessions </title>
+      <name> weblogicsessions </name>
+      <sql>
+select upper(machine) "Weblogic Server", 
+       decode(replace(module,'N/A-',''),'web','webcfo',replace(module,'N/A-','')) || t1.inst_id "Connection Pool", 
+       --instance_name "Instance", 
+       count(*) "Session Count"
+  from gv$session t1, gv$instance t2
+  where t1.inst_id = t2.inst_id
+    and upper(module) like 'N/A-WEB%'
+    and machine like ?
+  group by machine, 
+           --instance_name, 
+           decode(replace(module,'N/A-',''),'web','webcfo',replace(module,'N/A-','')) || t1.inst_id
+  order by 1, 2
+      </sql>   
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> weblogicserver </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>  
+    </query>
+    
+  </queries>
+  
+</powerdba-query-list>

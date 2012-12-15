@@ -1,0 +1,231 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<perfstat>
+  <statistics>
+  
+    <statistic>
+      <id>501</id>
+      <name>Data File IO</name>
+      <query> select 
+                   a.filename "Data File", 
+                   a.tsname "Tablespace", 
+                   b.phyrds-a.phyrds "Physical Reads",   
+                   b.phywrts-a.phywrts "Physical Writes",
+                   b.singleblkrds-a.singleblkrds "Single Block Reads",
+                   b.readtim-a.readtim "Read Time",
+                   b.writetim-a.writetim "Write Time",
+                   b.singleblkrdtim-a.singleblkrdtim "Single Blk Read Tm",
+                   b.phyblkrd-a.phyblkrd "Physical Blk Rd",
+                   b.phyblkwrt-a.phyblkwrt "Physical Blk Wrt",
+                   b.wait_count-a.wait_count "Wait Count",
+                   b.time-a.time "Time",
+                   (b.phyblkrd-a.phyblkrd) + (b.phyblkwrt-a.phyblkwrt) "IOs"
+              from stats$filestatxs a,
+                   stats$filestatxs b
+              where a.tsname=b.tsname
+                and a.filename=b.filename
+      </query>  
+      <groupby></groupby>
+      <orderby> order by (b.phywrts-a.phywrts) + (b.phyrds-b.phyrds) desc </orderby>
+      
+      <tablename> stats$filestatxs </tablename>
+      
+      <lookups>
+        <lookup>
+          <column>tsname</column>
+          <name>Tablespace</name>
+          <query>select distinct tsname, tsname from stats$filestatxs</query>
+        </lookup>
+        <lookup>
+          <column>filename</column>
+          <name>File Name</name>
+          <query>select distinct filename, filename from stats$filestatxs</query>
+        </lookup>
+      </lookups>
+        
+    </statistic>
+    
+    <statistic>
+      <id>509</id>
+      <name>Tablespace IO</name>
+      <query> select 
+                   a.tsname "Tablespace", 
+                   sum(b.phyrds-a.phyrds) "Physical Reads",   
+                   sum(b.phywrts-a.phywrts) "Physical Writes",
+                   sum(b.singleblkrds-a.singleblkrds) "Single Block Reads",
+                   sum(b.readtim-a.readtim) "Read Time",
+                   sum(b.writetim-a.writetim) "Write Time",
+                   sum(b.singleblkrdtim-a.singleblkrdtim) "Single Blk Read Tm",
+                   sum(b.phyblkrd-a.phyblkrd) "Physical Blk Rd",
+                   sum(b.phyblkwrt-a.phyblkwrt) "Physical Blk Wrt",
+                   sum(b.wait_count-a.wait_count) "Wait Count",
+                   sum(b.time-a.time) "Time",
+                   sum((b.phyblkrd-a.phyblkrd) + (b.phyblkwrt-a.phyblkwrt)) "IOs"
+              from stats$filestatxs a,
+                   stats$filestatxs b
+              where a.tsname=b.tsname
+      </query>     
+      <groupby> group by a.tsname, b.tsname </groupby>
+      <orderby> order by sum((b.phyblkrd-a.phyblkrd) + (b.phyblkwrt-a.phyblkwrt)) desc </orderby>
+      <tablename> stats$filestatxs </tablename>
+        
+    </statistic>
+    
+    <statistic>
+      <id>503</id>
+      <name>Buffer Waits</name>
+      <query> select 
+                   a.class "Wait Class", 
+                   b.wait_count-a.wait_count "Wait Count",
+                   b.time-a.time "Total Time"
+              from stats$waitstat a,
+                   stats$waitstat b
+              where a.class=b.class
+      </query> 
+      <groupby></groupby>
+      <orderby> order by 3 desc </orderby>        
+    </statistic>
+    
+    <statistic>
+      <id>508</id>
+      <name>System Statistics</name>
+      <query> select 
+                   a.name "Name", 
+                   to_char(b.value-a.value,'999,999,999,999') "Value"
+              from stats$sysstat a,
+                   stats$sysstat b
+              where a.statistic#=b.statistic#
+                and b.value-a.value > 0
+      </query>    
+      <groupby></groupby>
+      <orderby> order by a.name </orderby>        
+    </statistic>
+    
+    <statistic>
+      <id>505</id>
+      <name>Latch Children</name>
+      <query> select 
+                   a.latch#,
+                   latch.name,
+                   a.child#,
+                   b.gets-a.gets "Gets",
+                   b.misses-a.misses "Misses",
+                   b.sleeps-a.sleeps "Sleeps",
+                   b.immediate_gets-a.immediate_gets "Immediate Gets",
+                   b.immediate_misses-a.immediate_misses "Immediate Misses",
+                   b.spin_gets-a.spin_gets "Spin Gets",
+                   b.wait_time-a.wait_time "Wait Time"
+              from stats$latch_children a,
+                   stats$latch_children b,
+                   v$latch latch
+              where a.latch#=b.latch#
+                and a.child#=b.child#
+                and a.latch# = latch.name
+      </query>  
+      <groupby></groupby>
+      <orderby> order by 10 desc </orderby>        
+    </statistic>
+    
+    <statistic>
+      <id>506</id>
+      <name>Latch Parent</name>
+      <query> select 
+                   a.latch#,
+                   latch.name,
+                   a.level#,
+                   b.gets-a.gets "Gets",
+                   b.misses-a.misses "Misses",
+                   b.sleeps-a.sleeps "Sleeps",
+                   b.immediate_gets-a.immediate_gets "Immediate Gets",
+                   b.immediate_misses-a.immediate_misses "Immediate Misses",
+                   b.spin_gets-a.spin_gets "Spin Gets",
+                   b.wait_time-a.wait_time "Wait Time"
+              from stats$latch_parent a,
+                   stats$latch_parent b,
+                   v$latch latch
+              where a.latch#=b.latch#
+                and a.level#=b.level#
+                and a.latch# = latch.name
+      </query> 
+      <groupby></groupby>
+      <orderby> order by 10 desc </orderby>        
+    </statistic>
+    
+    <statistic>
+      <id>507</id>
+      <name>Latch Summary</name>
+      <query> select 
+                   a.latch#,
+                   latch.name,
+                   a.level#,
+                   b.gets-a.gets "Gets",
+                   b.misses-a.misses "Misses",
+                   b.sleeps-a.sleeps "Sleeps",
+                   b.immediate_gets-a.immediate_gets "Immediate Gets",
+                   b.immediate_misses-a.immediate_misses "Immediate Misses",
+                   b.spin_gets-a.spin_gets "Spin Gets",
+                   b.wait_time-a.wait_time "Wait Time"
+              from stats$latch_parent a,
+                   stats$latch_parent b,
+                   v$latch latch
+              where a.latch#=b.latch#
+                and a.level#=b.level#
+                and a.latch# = latch.name
+      </query>
+      <groupby></groupby>
+      <orderby> order by 3 desc </orderby>        
+    </statistic>
+    
+    <statistic>
+      <id>504</id>
+      <name>System Wait Events</name>
+      <query> select 
+                   a.event, 
+                   b.total_waits-a.total_waits "Total Waits",
+                   b.total_timeouts-a.total_timeouts "Total Timeouts",
+                   round((b.time_waited_micro-a.time_waited_micro)/1000000,2) "Time Waited(Seconds)"
+              from stats$system_event a,
+                   stats$system_event b
+              where a.event=b.event
+                and b.total_waits-a.total_waits > 0
+                and a.event not like 'PX%'
+                and a.event not like 'control file %'
+                and a.event not like 'Queue Monitor%'
+                and a.event not in ('smon timer',
+                                    'pmon timer',
+                                    'rdbms ipc message',
+                                    'Null event',
+                                    'parallel query dequeue',
+                                    'pipe get',
+                                    'client message',
+                                    'SQL*Net message to client',
+                                    'SQL*Net message from client',
+                                    'SQL*Net more data from client',
+                                    'SQL*Net more data to client',
+                                    'SQL*Net message from dblink',
+                                    'rdbms ipc reply',
+                                    'dispatcher timer',
+                                    'virtual circuit status',
+                                    'lock manager wait for remote message',
+                                    'PX Idle Wait',
+                                    'PX Deq: Execution Msg',
+                                    'PX Deq: Table Q Normal',
+                                    'wakeup time manager',
+                                    'slave wait',
+                                    'class slave wait',
+                                    'i/o slave wait',
+                                    'jobq slave wait',
+                                    'null event',
+                                    'gcs remote message',
+                                    'gcs for action',
+                                    'ges remote message',
+                                    'queue messages',
+                                    'ARCH wait on SENDREQ')
+      </query>   
+      <groupby></groupby>
+      <orderby> order by 4 desc </orderby>        
+    </statistic>
+        
+  </statistics>
+
+</perfstat>
+

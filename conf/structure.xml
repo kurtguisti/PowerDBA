@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='windows-1252'?>
+
+<powerdba-structure>
+
+  <menus>
+  
+    <menu name=MAIN_MENU>
+      <options>
+        <option>
+          <desc>Instance</desc>
+          <item>INSTANCE_MENU</item>
+        </option>
+        <option>
+          <desc>Database</desc>
+          <item>DATABASE_MENU</item>
+        </option>
+        <option>
+          <desc>Streams</desc>
+          <item>STREAMS_MENU</item>
+        </option>
+      </options>
+    </menu>
+    
+    <menu name=INSTANCE_MENU>
+      <options>
+        <option>
+          <desc>Summary</desc>
+          <item>DB_INSTANCE</item>
+        </option>
+        <option>
+          <desc>Sessions</desc>
+          <item>DB_SESSIONS_ACTIVE</item>
+        </option>
+        <option>
+          <desc>Longops</desc>
+          <item>DB_LONGOPS</item>
+        </option>
+      </options>
+    </menu>
+
+  </menus>
+
+  <pages>
+  
+    <page id=DB_SESSION_ZOOM>
+    
+      <desc>Session Detail</desc>
+
+      <parameters>
+        <paramater>
+          <name>sid</name>
+          <datatype>integer</datatype>
+          <position>1</position>
+        </parameter>
+        <paramater>
+          <name>serial#</name>
+          <datatype>integer</datatype>
+          <position>2</position>
+        </parameter>
+      </parameter>
+        
+      <menu1>INSTANCE_MENU</menu1>
+
+      <datasources>
+        <datasource name=DB_SESSION_DETAIL/>
+        <datasource name=DB_CURRENT_SQL/>
+        <datasource name=DB_OPEN_CURSORS/>
+      </datasources>
+      
+    </page>
+    
+    <page id=DB_SESSIONS>
+    
+      <parameters>
+        <paramater>
+          <name>status</name>
+          <datatype>string</datatype>
+          <position>1</position>
+        </parameter>
+        <paramater>
+          <name>type</name>
+          <datatype>string</datatype>
+          <position>2</position>
+        </parameter>
+      </parameter>
+        
+      <menu1>INSTANCE_MENU</menu1>
+      <menu2>SESSIONS_MENU</menu2>
+
+      <datasources>
+        <datasource name=DB_SESSIONS_ACTIVE/>
+      </datasources>
+            
+    </page>
+
+  </pages>
+  
+  <datasources>
+    <datasource name=ACTIVE_SESSIONS>
+      <sql>select to_char(vs.sid) "Sid",
+                  to_char(vs.serial#) "Ser#",
+                  decode(vs.status,'ACTIVE','Act','INACTIVE','Ina',vs.status) " ",
+                  lower(vs.username) "Ora User",
+                  lower(vs.module)  || ' ' || lower(vs.action) "App Info",
+                  vs.osuser "OS User",
+                  decode(vs.type, 'BACKGROUND', vbg.name, decode(vs.program,null,vp.program,vs.program)) "Client Program",
+                  vs.process "Client Pid",
+                  vp.spid "Server Pid",
+                  to_char(vss.value,'99,999,999,999') "Statistic^",
+                  decode(vs.command, 0, '', 2,'Insert',3,'Select',6,'Update',7,'Delete',47,'Pl/sql',62,'Analyze',vs.command) "Cmd",
+                  vsw.event "Current Wait Event", 
+                  vsw.p1 "P1", 
+                  vsw.p2 "P2", 
+                  vsw.p3 "P3", 
+                  //lower(vs.resource_consumer_group) "Resource Group",
+                  decode(vslo.sid,null,null, to_char(round(sofar/totalwork*100,0))||'%') "Long",
+                  decode(lck.sid,null,null,lck.job_id) "Job" 
+             from v$session vs, 
+                  v$process vp, 
+                  v$bgprocess vbg, 
+                  v$sesstat vss, 
+                  v$session_wait vsw, 
+                  v$session_longops vslo,
+                  (select sid, id2 job_id from v$lock where type = 'JQ') lck
+             where vs.paddr = vp.addr
+               and vbg.paddr (+) = vp.addr
+               and vslo.sid (+) = vs.sid
+               and lck.sid (+) = vs.sid
+               and vslo.time_remaining (+) > 0
+               and vs.sid   = vss.sid
+               and vs.sid   = vsw.sid
+               and vss.statistic# = " + statistic + 
+               -- and vs.type != 'BACKGROUND'
+               and vsw.event != 'smon timer'
+               and vsw.event != 'pmon timer'
+               and vs.status like '" + sessionStatus + "'" +
+               and vsw.event not in ('jobq slave wait','wakeup time manager','rdbms ipc message')
+             order by vs.status, vss.value desc
+      </sql>
+
+      <links>
+        <link>
+          <to-page>DB_SESSION_ZOOM</to-page>
+          <link-column>sid</link-column>
+          <variables>
+            <variable name=sid>
+              <from-column>sid</from-column>
+            </variable>
+            <variable>
+              <from-column>ser#</from-column>
+            </variable>
+          </variables>
+        </link>
+      </links>
+      
+      <hiddens>
+        <hidden>sid</hidden>
+      </hiddens>
+
+    </datasource>
+    
+  </datasources>
+    
+  
+</powerdba-structure>

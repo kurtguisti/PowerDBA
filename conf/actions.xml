@@ -1,0 +1,639 @@
+<powerdba-actions>
+
+  <actions> 
+  
+
+  
+    <action name="SQL_DETAIL">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> SQL Stats </title>
+      <is-rac> false </is-rac>
+      <queries>
+        <query name="sql_detail"/>
+      </queries>
+    </action>
+  
+    <action name="ODM_MEMORY">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> ODM Memory Summary </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="odm_memory"/>
+      </queries>
+    </action>
+
+    <action name="DB_TRANSACTIONS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Current Transactions </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="all_transactions"/>
+      </queries>
+    </action>
+    
+
+    
+    <action name="DB_FREESPACE_PROBLEMS">
+      <menu1> DATABASE_MENU </menu1>
+      <menu2> FREESPACE_MENU </menu2>
+      <title> Tablespace Low on Space </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="freespace_problems"/>
+      </queries>
+    </action>
+    
+    <action name="DB_STREAMS_TRANS">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> STREAMS_MENU </menu2>
+      <title> Streams Transactions </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="streams_trans"/>
+      </queries>
+    </action>
+    
+    <action name="DB_INSTANTIATED_TABLES">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> STREAMS_MENU </menu2>
+      <title> Instantiated Tables </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="streams_apply_inst_tables"/>
+      </queries>
+    </action>
+    
+    <action name="DB_STREAMS_SHREDDERS">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> STREAMS_MENU </menu2>
+      <title> LCR Shredders </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="lcr_shredders"/>
+      </queries>
+    </action>
+    
+    <action name="DB_STREAMS_ERROR_QUEUE">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> STREAMS_MENU </menu2>
+      <title> Apply Errors </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="apply_errors"/>
+      </queries>
+    </action>
+    
+    
+    
+    <action name="DB_STREAMS_BG">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> STREAMS_MENU </menu2>
+      <title> Streams Background Processes </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="streams_bg"/>
+      </queries>
+    </action>
+    
+    <action name="DB_QUEUE_STATES">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> STREAMS_MENU </menu2>
+      <title> User Queue Message States </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="queue_states"/>
+      </queries>
+    </action>
+    
+    <action name="DB_REGISTERED_LOGS">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> STREAMS_MENU </menu2>
+      <title> Logs Registered by Capture </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="registered_logs"/>
+      </queries>
+    </action>
+  
+    <action name="DB_MEMORY">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> MEMORY_MENU </menu2>
+      <title> Memory Summary </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="memory"/>
+        <query name="memory_summary"/>
+        <query name="memory_by_machine"/>
+      </queries>
+    </action>
+    
+    <action name="PGA_DETAILS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> MEMORY_MENU </menu2>
+      <title> PGA Detail </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="pga_detail"/>
+      </queries>
+    </action>
+  
+    <action name="DB_FREESPACE">
+      <menu1> DATABASE_MENU </menu1>
+      <menu2> FREESPACE_MENU </menu2>
+      <title> Freespace </title>
+      <queries>
+        <query name="freespace"/>
+      </queries>
+    </action>
+    
+    <action name="DB_SESSIONS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Sessions </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="sessions"/>
+      </queries>
+    </action>
+    
+
+    
+    <action name="DB_SYSSTAT">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SYSSTAT_MENU </menu2>
+      <title> System Statistics </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="sysstat"/>
+      </queries>
+    </action>
+    
+    <action name="DB_BLOCKERS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Blocking Sessions </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="blockers"/>
+      </queries>
+    </action>
+    
+    <action name="DB_BG_SESSIONS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Background Sessions </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="backgroundsessions"/>
+      </queries>
+    </action>
+    
+    <action name="DB_SESSIONS2">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Sessions - SQL </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="sessions_sql"/>
+      </queries>
+    </action>
+    
+    <action name="DB_POWERDBA_SESSIONS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> PowerDBA Sessions </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="powerdbasessions"/>
+      </queries>
+    </action>
+    
+    <action name="DB_FILES">
+      <menu1> DATABASE_MENU </menu1>
+      <title> Database Files </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="dbfiles"/>
+      </queries>
+    </action>
+    
+    <action name="DB_GLOBAL_SERVICES">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Global Services </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="globalservices"/>
+      </queries>
+    </action>
+    
+    <action name="BUFFER_CACHE_SEG">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> MEMORY_MENU </menu2>
+      <title> Buffer Cache Segments </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="buffercacheseg"/>
+      </queries>
+    </action>
+    
+    <action name="BUFFER_CACHE">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> MEMORY_MENU </menu2>
+      <title> Buffer Cache By File </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="buffercache"/>
+      </queries>
+    </action>
+    
+    <action name="DB_SYSTEM_EVENTS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SYSSTAT_MENU </menu2>
+      <title> System Events </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="systemevents"/>
+      </queries>
+    </action>
+    
+    <action name="DB_LATCH_PARENT">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> LATCH_MENU </menu2>
+      <title> Latch Summary </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="parentlatches"/>
+      </queries>
+    </action>
+    
+    <action name="DB_MVIEW_LOG_DEP">
+      <menu1> DATABASE_MENU </menu1>
+      <menu2> MVIEW_MENU </menu2>
+      <title> Materialized View Log Dependencies </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="mviewlogdependencies"/>
+      </queries>
+    </action>
+    
+    <action name="DB_MVIEW_LOGS">
+      <menu1> DATABASE_MENU </menu1>
+      <menu2> MVIEW_MENU </menu2>
+      <title> Materialized View Logs </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="mviewlogs"/>
+      </queries>
+    </action>
+    
+    <action name="DB_MVIEWS">
+      <menu1> DATABASE_MENU </menu1>
+      <menu2> MVIEW_MENU </menu2>
+      <title> Materialized Views </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="mviews"/>
+      </queries>
+    </action>
+    
+    <action name="DB_PQSLAVES">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <menu2> PQ_DETAIL_MENU </menu2>
+      <title> PQ Slave Processes </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="pqslaves"/>
+      </queries>
+    </action>
+
+    <action name="DB_PQSTATS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <menu2> PQ_DETAIL_MENU </menu2>
+      <title> PQ Statistics </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="pqstats"/>
+      </queries>
+    </action>
+    
+    <action name="DB_PQSESSION">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <menu2> PQ_DETAIL_MENU </menu2>
+      <title> PQ Session </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="pqsession"/>
+      </queries>
+    </action>
+    
+    <action name="DB_PQTQ">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <menu2> PQ_DETAIL_MENU </menu2>
+      <title> PQ Table Queue Statistics </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="pqtq"/>
+      </queries>
+    </action>
+    
+    <action name="DB_RECOVERY_SIZE">
+      <menu1> DATABASE_MENU </menu1>
+      <menu2> RMAN_MENU </menu2>
+      <title> Recovery Area </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="recoveryarea"/>
+      </queries>
+    </action>
+    
+    <action name="DB_DIRECTORIES">
+      <menu1> DATABASE_MENU </menu1>
+      <menu2> TABLESPACE_MENU </menu2>
+      <title> Directories </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="directories"/>
+      </queries>
+    </action>
+    
+    <action name="DB_LOCKS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Enqueues </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="locks"/>
+      </queries>
+    </action>
+    
+    <action name="DB_LONGOPS">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Long Ops </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="longops"/>
+      </queries>
+    </action>
+    
+    <action name="DB_SCHJOBS_WL">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Scheduler Jobs </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="scheduler_jobs"/>
+      </queries>
+    </action>
+    
+    <action name="DB_SCHJOBS_HIST">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> SESSIONS_MENU </menu2>
+      <title> Scheduler Job History </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="scheduler_job_history"/>
+      </queries>
+    </action>
+    
+    <action name="DB_SCHEMAS">
+      <menu1> DATABASE_MENU </menu1>
+      <menu2> SCHEMA_MENU </menu2>
+      <title> Schema Browser </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="all_schemas"/>
+      </queries>
+    </action>
+    
+    <action name="DB_TAB_MODIFICATIONS">
+      <menu1> DATABASE_MENU </menu1>
+      <menu2> SCHEMA_MENU </menu2>
+      <title> Table Changes </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="db_tab_modifications"/>
+      </queries>
+    </action>
+    
+    <action name="DB_TAB_STATISTICS">
+      <menu1> DATABASE_MENU </menu1>
+      <menu2> SCHEMA_MENU </menu2>
+      <title> Table Statistics </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="db_tab_statistics"/>
+      </queries>
+    </action>
+    
+    <action name="DB_SCHEMAS_W_OBJECTS">
+      <menu1> DATABASE_MENU </menu1>
+      <menu2> SCHEMA_MENU </menu2>
+      <title> Schemas With Objects </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="schemas_w_objects"/>
+      </queries>
+    </action>
+    
+    <action name="DB_HIDDEN_PARMS">
+      <menu1> INSTANCE_MENU </menu1>
+      <title> Hidden Parameters </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="hidden parms"/>
+      </queries>
+    </action>
+    
+    <action name="LC_MOSTEXEC_SQL">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> LIBRARY_CACHE_MENU </menu2>
+      <title> Most Executed Sql </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="most_executed"/>
+      </queries>
+    </action>
+    
+    <action name="LC_ELAPSED_SQL">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> LIBRARY_CACHE_MENU </menu2>
+      <title> Longest NonSystem Running SQL </title>
+      <is-rac> TRUE </is-rac>
+      <queries>
+        <query name="elapsed_queries"/>
+      </queries>
+    </action>
+    
+    <action name="DB_CARFAX_WEBLOGIC_SUMMARY">
+      <menu1> INSTANCE_MENU </menu1>
+      <menu2> MEMORY_MENU </menu2>
+      <title> Weblogic </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="weblogicsessions"/>
+      </queries>
+    </action>
+    
+    <action name="DB_AQ_QUEUE_TABLES">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_SRC </menu2>
+      <title> Queue Tables </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="queuetables"/>
+      </queries>
+    </action>
+    
+    <action name="DB_AQ_QUEUEMAPS">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_SRC </menu2>
+      <title> Remote Queues </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="queuemaps"/>
+      </queries>
+    </action>
+    
+    <action name="DB_AQ_PROPAGATIONS">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_SRC </menu2>
+      <title> Propagations </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="propagations"/>
+      </queries>
+    </action>
+    
+    <action name="DB_AQ_QUEUE_ROUTING">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_SRC </menu2>
+      <title> Message Routing </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="queuerouting"/>
+      </queries>
+    </action>
+    
+    <action name="DB_AQ_QUEUE_MASTER">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_SRC </menu2>
+      <title> Available Queues </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="queuemaster"/>
+      </queries>
+    </action>
+    
+    <action name="DB_AQ_ENQ_ERRORS">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_SRC </menu2>
+      <title> Enqueue Errors </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="queue_enq_errors"/>
+      </queries>
+    </action>
+    
+    <action name="DB_AQ_DEST_MESSAGES">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_DEST </menu2>
+      <title> Destination Messages </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="destmsgtypes"/>
+      </queries>
+    </action>
+    
+    <action name="DB_AQ_DEQ_ERROR_XML">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_DEST </menu2>
+      <title> Errored Messages </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="queue_deq_error_xml"/>
+      </queries>
+    </action>
+    
+    <action name="DB_AQ_DEQ_ERRORS">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_DEST </menu2>
+      <title> Shredder Errors </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="queue_deq_errors"/>
+      </queries>
+    </action>
+    
+    <action name="DB_AQ_MSG_HANDLERS">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_DEST </menu2>
+      <title> Message Handlers </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="messagehandlers"/>
+      </queries>
+    </action>
+    
+    <action name="DB_AQ_MSG_HANDLER_STATS">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_DEST </menu2>
+      <title> Message Handler Stats </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="shredderstats"/>
+      </queries>
+    </action>
+    
+    <action name="DB_AQ_HANDLER_ERRSUMM">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_DEST </menu2>
+      <title> Message Handler Error Summary </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="shreddererrorsummary"/>
+      </queries>
+    </action>
+    
+    <action name="DB_AQ_SHREDDERS">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_DEST </menu2>
+      <title> Message Shredders </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="messageshredders"/>
+      </queries>
+    </action>
+    
+    <action name="DB_MESSAGE_LATENCY">
+      <menu1> MESSAGING_MENU </menu1>
+      <title> Message Latency </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="messagelatency"/>
+      </queries>
+    </action>
+    
+    <action name="DB_AQ_SHREDDERS">
+      <menu1> MESSAGING_MENU </menu1>
+      <menu2> AQ_MENU_DEST </menu2>
+      <title> Message Shredders </title>
+      <is-rac> FALSE </is-rac>
+      <queries>
+        <query name="messageshredders"/>
+      </queries>
+    </action>
+    
+
+    
+  </actions>
+  
+</powerdba-actions>

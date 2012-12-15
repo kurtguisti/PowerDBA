@@ -1,0 +1,15 @@
+<?xml version = '1.0' encoding = 'windows-1252'?>
+
+<project name="PowerDBA" default="build" basedir=".">
+ 
+  <target name="build">
+	<ant antfile="build.xml" target="deploy">
+	  <property name="system.target" value="localhost"/>
+	</ant>
+	<copy todir="g:\apache-tomcat-5.5.25\webapps\powerdba">
+	  <fileset dir="d:\powerdbadist_localhost\powerdba">
+		<include name="**/*"/>
+	  </fileset>
+	</copy>
+  </target>
+</project>

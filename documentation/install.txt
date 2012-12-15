@@ -1,0 +1,67 @@
+Power*DBA Installation Quickstart for Tomcat
+
+1.  Place the file powerdba.jar in the webapps directory under tomcat and run "jar -xvf powerdba.jar" to explode it.  
+
+2.  Place the dbconfig.xml file in the directory where you start tomcat.  See note 1 below.
+
+3.  Edit the dbconfig.xml file, setting up your databases. Connections should be to a valid Oracle dba account.
+
+4.  Edit the file webapps/powerdba/WEB-INF/classes/com/powerdba/util/powerdba.properties setting chartTmp & traceFileDirectory, 
+    see note 2 below.
+
+5.  On unix, in order for the charting to work (jfreechart uses awt and awt on unix normally needs the x server), 
+    you need to set the env variable shown below, in your startup script prior to starting tomcat.
+    This tells the jvm not look for an X server.  This is not an issue on Windows.  Put this in the tomcat startup script.
+    
+                   CATALINA_OPTS=-Djava.awt.headless=true; export CATALINA_OPTS
+                   
+Example tomcat startup shell script:
+
+#!/bin/sh
+JAVA_HOME=/apps/oracle/product/10.1.0/db/jdk; export JAVA_HOME
+CATALINA_HOME=/apps/oracle/tomcat/kurt_tomcat; export CATALINA_HOME
+CATALINA_OPTS=-Djava.awt.headless=true; export CATALINA_OPTS
+CLASSPATH=$CATALINA_HOME/common/lib/servlet.jar:$CATALINA_HOME/common/lib/jdom.jar:$CATALINA_HOME/common/lib/xerces.jar:$CLASSPATH; export CLASSPATH
+PATH=$CATALINA_HOME/bin:$JAVA_HOME/bin:$PATH; export PATH
+# cd to the conf directory so tomcat can read the dbconfig.xml file stored there
+cd /apps/oracle/tomcat/conf
+$CATALINA_HOME/bin/startup.sh 
+
+6.  Restart tomcat.
+
+7.  http://hostname:tomcatport/powerdba/powerdba.jsp to access powerdba.
+
+
+Power*DBA Installation Notes
+
+1.  The included file dbconfig.xml is an example of how to set up database connections.  
+    Place this file in the directory where you start tomcat.  
+    If you need to move it, specify its location in the powerdba.properties file property connectionPoolPropertiesFile.  
+    You can also add, edit, remove connections via the admin GUI.  You can also monitor the status of the databases here.
+
+2.  Edit the powerdba.properties file in webapps/powerdba/WEB-INF/classes/com/powerdba/util, and set the following two properties:
+  - chartTmp (directory where temp files for charting are written), a recommendation here is to use /tmp or something on unix.
+    these files are constantly being created and removed.
+  - traceFileDirectory (directory where trace files are written), a recommendation here may be to use the tomcat/log directory
+    for your tomcat installation.
+
+3. Currently, the admin password is anything other than null.
+
+4. In order to get meaningful charting data in Oracle 9i and earlier, install and configure Oracle's statspack in the database 
+   needing to be monitoried/managed.  It is available in the $ORACLE_HOME/rdbms/admin directory.  
+   Run spcreate.sql and spauto.sql to install and put perfstat on the job queue.   
+   by default the job will run on the hour.  To get more granular charting data, set the job to run at a shorter interval.  
+   The following code can be used instead of spauto.sql to submit at other than 1 hour intervals.
+
+-- Submit statspack to run every 5 minutes.
+variable jobno number;
+variable instno number;
+begin
+  select instance_number into :instno from v$instance;
+  dbms_job.submit(:jobno, 'statspack.snap;', sysdate, 'SYSDATE+(5/1440)', TRUE, :instno);
+  commit;
+end;
+/ 
+
+5.  In a RAC system, you must configure connections in dbconfig.xml to each instance in your clustered database.
+

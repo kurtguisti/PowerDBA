@@ -1,0 +1,1993 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<powerdba-query-list>
+
+  <queries>
+
+    <query name="q_subscribers">
+      <title> Queue Subscribers </title>
+      <name> q_subscribers </name>
+      <rac-enabled> N </rac-enabled>
+      <sql>
+          select * from dba_queue_subscribers where owner='IFC_ADMIN' and queue_name = ?
+      </sql>
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> queuename </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>
+        
+    </query>
+  
+    <query name="sessions_short">
+      <title> Sessions </title>
+      <name> sessions_short </name>
+      <rac-enabled> N </rac-enabled>
+      <sql>
+          select vs.sid "Sid", 
+                 vs.status "Status", 
+                 vs.osuser "OS User",
+                 lower(vs.username) "Ora User", 
+                 vs.machine,
+                 substr(vs.module || ' / ' || vs.action,1,35) "App Info", 
+                 service_name "Service",
+                 vs.program "Client Program", 
+                 decode(vs.command, 0, ' ', 2,'Ins',3,'Sel',6,'Upd',45,'Rbk',7,'Del',47,'Pls',62,'Alz',vs.command) "Cmd", 
+                 vs.event "Current Wait Event",  
+                 vs.p1 "P1",  
+                 vs.p2 "P2",  
+                 vs.p3 "P3",   
+                 blocking_session "Blk"
+              from (select * from v$session where nvl(module,'XXX') != 'Power*DBA') vs
+              where vs.status like ?
+                and vs.username like ?
+                and vs.type like ?
+                and (lower(nvl(vs.program,'xxx'))) not like '%emagent%' -- or vs.program like '%(J%')
+                and nvl(vs.module,'xxx') like ?
+                and nvl(machine,'xxx') like ?
+                and nvl(vs.service_name,'xxx') like ?
+                and vs.program not like '%(O%'
+                and vs.event not in ('wait for unread message on broadcast channel',
+                                     'Streams AQ: waiting for messages in the queue')
+              order by vs.status desc
+      </sql>
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> sessionstatus </name>
+          <default-value> ACTIVE </default-value>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> oracleuser </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 3 </position>
+          <name> sessiontype </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 4 </position>
+          <name> module </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 5 </position>
+          <name> machine </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 6 </position>
+          <name> service </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>
+      
+      <links>
+        <link>
+          <action> DB_SESS_ZOOM </action>
+          <column> sid </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+          </linkvars>
+        </link>
+        
+        <link>
+          <action> DB_WAIT_DETAIL </action>
+          <column> Current Wait Event </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+            <var>
+              <varname> event </varname>
+              <from-column> Current Wait Event </from-column>
+            </var>
+            <var>
+              <varname> p1 </varname>
+              <from-column> p1 </from-column>
+            </var>
+            <var>
+              <varname> p2 </varname>
+              <from-column> p2 </from-column>
+            </var>
+            <var>
+              <varname> p3 </varname>
+              <from-column> p3 </from-column>
+            </var>
+          </linkvars>
+        </link>
+            
+        <link>
+          <action> DB_SESS_ZOOM </action>
+          <column> blocker </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> blocker </from-column>
+            </var>
+          </linkvars>
+        </link>
+                
+      </links>
+        
+    </query>
+    
+
+
+    <query name="sessions">
+      <title> Sessions </title>
+      <name> sessions </name>
+      <rac-enabled> N </rac-enabled>
+      <sql>
+          select vs.sid "Sid",
+                 vp.spid "OSPid", 
+                 vs.status "Status", 
+                 vs.osuser "OS User",
+                 lower(vs.username) "Ora User", 
+                 vs.machine,
+                 substr(vs.module || decode(vs.action,null,null,'/') || vs.action|| decode(vs.client_info,null,null,'/') || vs.client_info ,1,60) "Module/Action/ClientInfo", 
+                 service_name "Service",
+                 vs.program "Client Program", 
+                 to_char(vss.value,'9,999,999,999,999') "Stat^",  
+                 vs.event "Current Wait Event",  
+                 vs.seconds_in_wait "Sec Wt",
+                 vs.p1 "P1",  
+                 vs.p2 "P2",  
+                 vs.p3 "P3",  
+                 decode(vslo.sid, null, null, to_char(round(sofar/totalwork*100,0))||'%') "Long",
+                 --to_char((tm1.value/decode(tm2.value,0,.000000001,tm2.value))*100,'9,999.99')||'%' "On CPU",
+                 vs.blocking_session "Blk",
+                 decode(trx.ses_addr,null,null,to_char(((sysdate - trx.start_date)*24*60),'999.99')||'|'||trx.log_io) "Trx"
+              from (select * from v$session where nvl(module,'XXX') != 'Power*DBA') vs,
+                   v$process vp, 
+                   v$sesstat vss, 
+                   v$session_longops vslo,
+                   v$transaction trx
+                   --v$sess_time_model tm1,
+                   --v$sess_time_model tm2
+              where vs.paddr       = vp.addr (+)
+                and vslo.sid (+)   = vs.sid
+                and vs.sid         = vss.sid
+                and vs.saddr       = trx.ses_addr (+)
+                --and tm1.sid        = vs.sid
+                --and tm2.sid        = vs.sid
+                --and tm1.stat_name  = 'DB CPU' 
+                --and tm2.stat_name  = 'DB time'
+                and vss.statistic# (+) = ?
+                and vs.status like ?
+                and vs.username like ?
+                and vs.type like ?
+                and (lower(nvl(vs.program,'xxx')) not like '%emagent%' or vs.program like '%(J%')
+                --and vs.program not like '%(O%'
+                and nvl(vs.module,'xxx') like ?
+                and nvl(machine,'xxx') like ?
+                and nvl(vs.service_name,'xxx') like ?
+                and vslo.time_remaining (+) > 0
+                and vs.event not in ('wait for unread message on broadcast channel',
+                                     'Streams AQ: waiting for messages in the queue',
+                                     'class slave wait',
+                                     'rdbms ipc message')
+              order by vs.status, vss.value desc
+      </sql>
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> statistic </name>
+          <default-value> 9 </default-value>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> sessionstatus </name>
+          <default-value> ACTIVE </default-value>
+        </var>
+        <var>
+          <position> 3 </position>
+          <name> oracleuser </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 4 </position>
+          <name> sessiontype </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 5 </position>
+          <name> module </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 6 </position>
+          <name> machine </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 7 </position>
+          <name> service </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>
+      
+      <links>
+        <link>
+          <action> DB_SESS_ZOOM </action>
+          <column> sid </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+          </linkvars>
+        </link>
+        
+        <link>
+          <action> DB_WAIT_DETAIL </action>
+          <column> Current Wait Event </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+            <var>
+              <varname> event </varname>
+              <from-column> Current Wait Event </from-column>
+            </var>
+            <var>
+              <varname> p1 </varname>
+              <from-column> p1 </from-column>
+            </var>
+            <var>
+              <varname> p2 </varname>
+              <from-column> p2 </from-column>
+            </var>
+            <var>
+              <varname> p3 </varname>
+              <from-column> p3 </from-column>
+            </var>
+          </linkvars>
+        </link>
+        
+        <link>
+          <action> DB_LONGOPS_DETAIL </action>
+          <column> Long </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+          </linkvars>
+        </link>
+        
+        <link>
+          <action> DB_JOBS_DETAIL </action>
+          <column> Job </column>
+          <linkvars>
+            <var>
+              <varname> key </varname>
+              <from-column> Job </from-column>
+            </var>
+          </linkvars>
+        </link>
+        
+        <link>
+          <action> DB_SESS_ZOOM </action>
+          <column> blocker </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> blocker </from-column>
+            </var>
+          </linkvars>
+        </link>
+                
+      </links>
+      
+      <hiddens>
+      	<hidden column-name="p1"/>
+      	<hidden column-name="p2"/>
+      	<hidden column-name="p3"/>
+      </hiddens>
+        
+    </query>
+    
+    
+    <query name="powerdbasessions">
+      <title> Sessions </title>
+      <name> powerdbasessions </name>
+      <rac-enabled> Y </rac-enabled>
+      <sql>
+          select 
+                 vs.sid "Sid", 
+                 vs.serial# "Ser#", 
+                 status "Status", 
+                 lower(vs.username) "Ora User", 
+                 substr(lower(vs.module) || ' ' || lower(vs.action),1,15) "App Info", 
+                 service_name "Service",
+                 vs.osuser "OS User", 
+                 vs.program "Client Program", 
+                 vp.spid "Server Pid",  
+                 to_char(vss.value,'99,999,999,999') "Statistic^", 
+                 decode(vs.command, 0, ' ', 2,'Ins',3,'Sel',6,'Upd',45,'Rbk',7,'Del',47,'Pls',62,'Alz',vs.command) "Cmd", 
+                 vs.event "Current Wait Event",  
+                 vs.p1 "P1",  
+                 vs.p2 "P2",  
+                 vs.p3 "P3",  
+                 decode(vslo.sid, null, null, to_char(round(sofar/totalwork*100,0))||'%') "Long", 
+                 decode(lck.sid, null, null, lck.job_id) "Job" 
+              from v$session vs, v$process vp, v$sesstat vss, v$session_longops vslo,
+                   (select sid, id2 job_id from v$lock where type = 'JQ') lck 
+              where vs.paddr = vp.addr (+)     
+                and vslo.sid (+) = vs.sid      
+                and lck.sid (+) = vs.sid    
+                and vslo.time_remaining (+) > 0  
+                and vs.sid   = vss.sid     
+                and vss.statistic# (+) = ? 
+                and vs.status like decode(?,'ANY','%',?)
+                and vs.username like decode(?, '-1', '%', ?)
+                and vs.type like ?
+                and lower(nvl(vs.program,'xxx')) not like '%emagent%'
+              order by vs.status, vss.value desc
+      </sql>
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> statistic </name>
+          <default-value> 9 </default-value>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> sessionstatus </name>
+          <default-value> ACTIVE </default-value>
+        </var>
+        <var>
+          <position> 3 </position>
+          <name> sessionstatus </name>
+          <default-value> ACTIVE </default-value>
+        </var>
+        <var>
+          <position> 4 </position>
+          <name> oracleuser </name>
+        </var>
+        <var>
+          <position> 5 </position>
+          <name> oracleuser </name>
+        </var>
+        <var>
+          <position> 6 </position>
+          <name> sessiontype </name>
+        </var>
+      </bind-variables>
+      
+      <links>
+        <link>
+          <action> DB_SESS_ZOOM </action>
+          <column> sid </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+          </linkvars>
+        </link>
+        
+        <link>
+          <action> DB_WAIT_DETAIL </action>
+          <column> Current Wait Event </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+            <var>
+              <varname> event </varname>
+              <from-column> Current Wait Event </from-column>
+            </var>
+            <var>
+              <varname> p1 </varname>
+              <from-column> p1 </from-column>
+            </var>
+            <var>
+              <varname> p2 </varname>
+              <from-column> p2 </from-column>
+            </var>
+            <var>
+              <varname> p3 </varname>
+              <from-column> p3 </from-column>
+            </var>
+          </linkvars>
+        </link>
+        
+        <link>
+          <action> DB_LONGOPS_DETAIL </action>
+          <column> Long </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+          </linkvars>
+        </link>
+        
+        <link>
+          <action> DB_JOBS_DETAIL </action>
+          <column> Job </column>
+          <linkvars>
+            <var>
+              <varname> key </varname>
+              <from-column> Job </from-column>
+            </var>
+          </linkvars>
+        </link>
+                
+      </links>
+        
+    </query>
+
+
+    
+    <query name="waithistory">
+      <title> Wait History </title>
+      <name> waithistory </name>
+      <sql>
+          select 'Current-> ' seq#, event, p1text, p1, rawtohex(p1raw) p1raw, p2text, p2, rawtohex(p2raw) p2raw, p3text, p3, rawtohex(p3raw) p3raw, wait_time, seconds_in_wait secs from v$session_wait where sid = ? union all
+          select to_char(seq#) seq#, event, p1text, p1, ' ', p2text, p2, ' ', p3text, p3, ' ', wait_time,  0 from v$session_wait_history where sid = ?
+      </sql>      
+
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> sid </name>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> sid </name>
+        </var>
+      </bind-variables> 
+      
+      <links>      
+        <link>
+          <action> DB_WAIT_DETAIL </action>
+          <column> event </column>
+          <linkvars>
+            <var>
+              <varname> event </varname>
+              <from-column> event </from-column>
+            </var>
+            <var>
+              <varname> p1 </varname>
+              <from-column> p1 </from-column>
+            </var>
+            <var>
+              <varname> p2 </varname>
+              <from-column> p2 </from-column>
+            </var>
+            <var>
+              <varname> p3 </varname>
+              <from-column> p3 </from-column>
+            </var>
+          </linkvars>
+        </link>            
+      </links>  
+      
+    </query>
+    
+    <query name="backgroundsessions">
+      <title> Background Sessions </title>
+      <name> backgroundsessions </name>
+      <sql>
+          select vs.sid "Sid", 
+                 vs.serial# "Ser#", 
+                 status "Status", 
+                 lower(vs.username) "Ora User", 
+                 lower(vs.module)  || ' ' || lower(vs.action) "App Info", 
+                 vs.osuser "OS User", 
+                 vbg.name "Name",
+                 vbg.description "Description",
+                 vs.program "Program",
+                 vp.spid "Server Pid",  
+                 to_char(vss.value,'99,999,999,999') "CPU",
+                 decode(vs.command, 0, ' ', 2,'Insert',3,'Select',6,'Update',45,'Rollback',7,'Delete',47,'Pl/sql',62,'Analyze',vs.command) "Cmd", 
+                 vsw.event "Current Wait Event",  
+                 vsw.p1 "P1",  
+                 vsw.p2 "P2",  
+                 vsw.p3 "P3",
+                 decode(lck.sid, null, null, lck.job_id) "Job" 
+              from v$session vs, 
+                   v$process vp, 
+                   v$bgprocess vbg, 
+                   v$session_wait vsw,
+                   v$sesstat vss,
+                   (select sid, id2 job_id from v$lock where type = 'JQ') lck 
+              where vs.paddr = vp.addr     
+                and vbg.paddr (+) = vp.addr       
+                and vs.sid   = vsw.sid     
+                and vs.sid   = lck.sid (+)
+                and vs.sid   = vss.sid (+)
+                and vss.statistic# = 12 -- CPU Used by this session
+                and (vs.type = 'BACKGROUND' or vs.username is null or vs.program like '%emagent%')
+              order by vs.status, vs.program
+      </sql>
+      
+      <bind-variables></bind-variables>      
+      
+      <links>
+        <link>
+          <action> DB_SESS_ZOOM </action>
+          <column> sid </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+          </linkvars>
+        </link>
+        <link>
+          <action> DB_WAIT_DETAIL </action>
+          <column> Current Wait Event </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+            <var>
+              <varname> event </varname>
+              <from-column> Current Wait Event </from-column>
+            </var>
+            <var>
+              <varname> p1 </varname>
+              <from-column> p1 </from-column>
+            </var>
+            <var>
+              <varname> p2 </varname>
+              <from-column> p2 </from-column>
+            </var>
+            <var>
+              <varname> p3 </varname>
+              <from-column> p3 </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links>
+        
+    </query>
+
+    <query name="blockers">
+      <title> Blockers </title>
+      <name> blockers </name>
+      <sql>
+SELECT blocking_sid, num_blocked 
+            FROM ( SELECT blocking_sid, SUM(num_blocked) num_blocked 
+            FROM ( SELECT l.id1, l.id2,
+                          MAX(DECODE(l.block, 1, i.instance_name||'-'||l.sid, 
+                          2, i.instance_name||'-'||l.sid, 0 )) blocking_sid,
+                          SUM(DECODE(l.request, 0, 0, 1 )) num_blocked
+                    FROM gv$lock l, gv$instance i
+                    WHERE ( l.block!= 0 OR l.request > 0 ) AND 
+                            l.inst_id = i.inst_id 
+                            GROUP BY l.id1, l.id2)
+            GROUP BY blocking_sid 
+            ORDER BY num_blocked DESC) 
+            WHERE num_blocked != 0
+      </sql>    
+        
+    </query>
+    
+    <query name="locks">
+      <title> Locks </title>
+      <name> locks </name>
+      <sql>
+select 
+nvl(S.USERNAME,s.program) username, 
+        L.SID sid, 
+        nvl(S.TERMINAL,'None') terminal, 
+        decode(command, 
+0,'None',decode(l.id2,0,U1.NAME||'.'||substr(T1.NAME,1,20),'None')) tab, 
+decode(command, 
+0,'Background', 
+1,'Create Table', 
+2,'INSERT', 
+3,'SELECT', 
+4,'CREATE CLUSTER', 
+5,'ALTER CLUSTER', 
+6,'UPDATE', 
+7,'DELETE', 
+8,'DROP', 
+9,'CREATE INDEX', 
+10,'DROP INDEX', 
+11,'ALTER INDEX', 
+12,'DROP TABLE', 
+13,'CREATE SEQUENCE', 
+14,'ALTER SEQUENCE', 
+15,'ALTER TABLE', 
+16,'DROP SEQUENCE', 
+17,'GRANT', 
+18,'REVOKE', 
+19,'CREATE SYNONYM', 
+20,'DROP SYNONYM', 
+21,'CREATE VIEW', 
+22,'DROP VIEW', 
+23,'VALIDATE INDEX', 
+24,'CREATE PROCEDURE', 
+25,'ALTER PROCEDURE', 
+26,'LOCK TABLE', 
+27,'NO OPERATION', 
+28,'RENAME', 
+29,'COMMENT', 
+30,'AUDIT', 
+31,'NOAUDIT', 
+32,'CREATE EXTERNAL DATABASE', 
+33,'DROP EXTERNAL DATABASE', 
+34,'CREATE DATABASE', 
+35,'ALTER DATABASE', 
+36,'CREATE ROLLBACK SEGMENT', 
+37,'ALTER ROLLBACK SEGMENT', 
+38,'DROP ROLLBACK SEGMENT', 
+39,'CREATE TABLESPACE', 
+40,'ALTER TABLESPACE', 
+41,'DROP TABLESPACE', 
+42,'ALTER SESSION', 
+43,'ALTER USER', 
+44,'COMMIT', 
+45,'ROLLBACK', 
+46,'SAVEPOINT', 
+47,'PL/SQL EXECUTE', 
+48,'SET TRANSACTION', 
+49,'ALTER SYSTEM SWITCH LOG', 
+50,'EXPLAIN', 
+51,'CREATE USER', 
+52,'CREATE ROLE', 
+53,'DROP USER', 
+54,'DROP ROLE', 
+55,'SET ROLE', 
+56,'CREATE SCHEMA', 
+57,'CREATE CONTROL FILE', 
+58,'ALTER TRACING', 
+59,'CREATE TRIGGER', 
+60,'ALTER TRIGGER', 
+61,'DROP TRIGGER', 
+62,'ANALYZE TABLE', 
+63,'ANALYZE INDEX', 
+64,'ANALYZE CLUSTER', 
+65,'CREATE PROFILE', 
+66,'DROP PROFILE', 
+67,'ALTER PROFILE', 
+68,'DROP PROCEDURE', 
+69,'DROP PROCEDURE',
+70,'ALTER RESOURCE COST', 
+71,'CREATE SNAPSHOT LOG', 
+72,'ALTER SNAPSHOT LOG', 
+73,'DROP SNAPSHOT LOG', 
+74,'CREATE SNAPSHOT', 
+75,'ALTER SNAPSHOT', 
+76,'DROP SNAPSHOT', 
+79,'ALTER ROLE',
+85,'TRUNCATE TABLE', 
+86,'TRUNCATE CLUSTER', 
+87,'-', 
+88,'ALTER VIEW', 
+89,'-', 
+90,'-', 
+91,'CREATE FUNCTION', 
+92,'ALTER FUNCTION', 
+93,'DROP FUNCTION', 
+94,'CREATE PACKAGE', 
+95,'ALTER PACKAGE', 
+96,'DROP PACKAGE', 
+97,'CREATE PACKAGE BODY', 
+98,'ALTER PACKAGE BODY', 
+99,'DROP PACKAGE BODY', 
+command||' - ???') COMMAND, 
+        decode(L.LMODE,1,'No Lock', 
+                2,'Row Share', 
+                3,'Row Exclusive', 
+                4,'Share', 
+                5,'Share Row Exclusive', 
+                6,'Exclusive','NONE') lmode, 
+        decode(L.REQUEST,1,'No Lock', 
+                2,'Row Share', 
+                3,'Row Exclusive', 
+                4,'Share', 
+                5,'Share Row Exclusive', 
+                6,'Exclusive','NONE') request, 
+l.id1||'-'||l.id2 Laddr, 
+l.type||' - '|| 
+decode(l.type, 
+'BL','Buffer hash table instance lock', 
+'CF',' Control file schema global enqueue lock', 
+'CI','Cross-instance function invocation instance lock',
+'CS','Control file schema global enqueue lock', 
+'CU','Cursor bind lock',
+'DF','Data file instance lock', 
+'DL','Direct loader parallel index create',
+'DM','Mount/startup db primary/secondary instance lock', 
+'DR','Distributed recovery process lock', 
+'DX','Distributed transaction entry lock', 
+'FI','SGA open-file information lock', 
+'FS','File set lock', 
+'HW','Space management operations on a specific segment lock',
+'IN','Instance number lock',
+'IR','Instance recovery serialization global enqueue lock', 
+'IS','Instance state lock',
+'IV','Library cache invalidation instance lock', 
+'JQ','Job queue lock',
+'KK','Thread kick lock',
+'MB','Master buffer hash table instance lock', 
+'MM','Mount definition gloabal enqueue lock', 
+'MR','Media recovery lock', 
+'PF','Password file lock',
+'PI','Parallel operation lock',
+'PR','Process startup lock',
+'PS','Parallel operation lock',
+'RE','USE_ROW_ENQUEUE enforcement lock', 
+'RT','Redo thread global enqueue lock', 
+'RW','Row wait enqueue lock', 
+'SC','System commit number instance lock', 
+'SH','System commit number high water mark enqueue lock', 
+'SM','SMON lock',
+'SN','Sequence number instance lock', 
+'SQ','Sequence number enqueue lock', 
+'SS','Sort segment lock',
+'ST','Space transaction enqueue lock', 
+'SV','Sequence number value lock', 
+'TA','Generic enqueue lock', 
+'TD','DDL enqueue lock', 
+'TE','Extend-segment enqueue lock', 
+'TM','DML enqueue lock', 
+'TO','Temporary Table Object Enqueue', 
+'TT','Temporary table enqueue lock', 
+'TX','Transaction enqueue lock', 
+'UL','User supplied lock', 
+'UN','User name lock', 
+'US','Undo segment DDL lock',
+'WL','Being-written redo log instance lock', 
+'WS','Write-atomic-log-switch global enqueue lock', 
+'TS',decode(l.id2,0,'Temporary segment enqueue lock (ID2=0)', 
+                    'New block allocation enqueue lock (ID2=1)'), 
+'LA','Library cache lock instance lock (A=namespace)', 
+'LB','Library cache lock instance lock (B=namespace)', 
+'LC','Library cache lock instance lock (C=namespace)', 
+'LD','Library cache lock instance lock (D=namespace)', 
+'LE','Library cache lock instance lock (E=namespace)', 
+'LF','Library cache lock instance lock (F=namespace)', 
+'LG','Library cache lock instance lock (G=namespace)', 
+'LH','Library cache lock instance lock (H=namespace)', 
+'LI','Library cache lock instance lock (I=namespace)', 
+'LJ','Library cache lock instance lock (J=namespace)', 
+'LK','Library cache lock instance lock (K=namespace)', 
+'LL','Library cache lock instance lock (L=namespace)', 
+'LM','Library cache lock instance lock (M=namespace)', 
+'LN','Library cache lock instance lock (N=namespace)', 
+'LO','Library cache lock instance lock (O=namespace)', 
+'LP','Library cache lock instance lock (P=namespace)', 
+'LS','Log start/log switch enqueue lock', 
+'PA','Library cache pin instance lock (A=namespace)', 
+'PB','Library cache pin instance lock (B=namespace)', 
+'PC','Library cache pin instance lock (C=namespace)', 
+'PD','Library cache pin instance lock (D=namespace)', 
+'PE','Library cache pin instance lock (E=namespace)', 
+'PF','Library cache pin instance lock (F=namespace)', 
+'PG','Library cache pin instance lock (G=namespace)', 
+'PH','Library cache pin instance lock (H=namespace)', 
+'PI','Library cache pin instance lock (I=namespace)', 
+'PJ','Library cache pin instance lock (J=namespace)', 
+'PL','Library cache pin instance lock (K=namespace)', 
+'PK','Library cache pin instance lock (L=namespace)', 
+'PM','Library cache pin instance lock (M=namespace)', 
+'PN','Library cache pin instance lock (N=namespace)', 
+'PO','Library cache pin instance lock (O=namespace)', 
+'PP','Library cache pin instance lock (P=namespace)', 
+'PQ','Library cache pin instance lock (Q=namespace)', 
+'PR','Library cache pin instance lock (R=namespace)', 
+'PS','Library cache pin instance lock (S=namespace)', 
+'PT','Library cache pin instance lock (T=namespace)', 
+'PU','Library cache pin instance lock (U=namespace)', 
+'PV','Library cache pin instance lock (V=namespace)', 
+'PW','Library cache pin instance lock (W=namespace)', 
+'PX','Library cache pin instance lock (X=namespace)', 
+'PY','Library cache pin instance lock (Y=namespace)', 
+'PZ','Library cache pin instance lock (Z=namespace)', 
+'QA','Row cache instance lock (A=cache)', 
+'QB','Row cache instance lock (B=cache)', 
+'QC','Row cache instance lock (C=cache)', 
+'QD','Row cache instance lock (D=cache)', 
+'QE','Row cache instance lock (E=cache)', 
+'QF','Row cache instance lock (F=cache)', 
+'QG','Row cache instance lock (G=cache)', 
+'QH','Row cache instance lock (H=cache)', 
+'QI','Row cache instance lock (I=cache)', 
+'QJ','Row cache instance lock (J=cache)', 
+'QL','Row cache instance lock (K=cache)', 
+'QK','Row cache instance lock (L=cache)', 
+'QM','Row cache instance lock (M=cache)', 
+'QN','Row cache instance lock (N=cache)', 
+'QO','Row cache instance lock (O=cache)', 
+'QP','Row cache instance lock (P=cache)', 
+'QQ','Row cache instance lock (Q=cache)', 
+'QR','Row cache instance lock (R=cache)', 
+'QS','Row cache instance lock (S=cache)', 
+'QT','Row cache instance lock (T=cache)', 
+'QU','Row cache instance lock (U=cache)', 
+'QV','Row cache instance lock (V=cache)', 
+'QW','Row cache instance lock (W=cache)', 
+'QX','Row cache instance lock (X=cache)', 
+'QY','Row cache instance lock (Y=cache)', 
+'QZ','Row cache instance lock (Z=cache)','????') Lockt 
+from    V$LOCK L,  
+        V$SESSION S, 
+        SYS.USER$ U1, 
+        SYS.OBJ$ T1 
+where   L.SID = S.SID  
+and     T1.OBJ#  = decode(L.ID2,0,L.ID1,1)  
+and     U1.USER# = T1.OWNER# 
+and     S.TYPE like ? 
+order by 1,2,5 
+      </sql>
+            
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> sessiontype </name>
+          <default-value> USER </default-value>
+        </var>
+      </bind-variables>
+      <links>
+        <link>
+          <action> DB_SESS_ZOOM </action>
+          <column> sid </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links>     
+        
+    </query>
+    
+    <query name="session_detail">
+      <title> Session Detail </title>
+      <name> session_detail </name>
+      <sql>
+                select
+                  t2.sid "Oracle SID", 
+                  t2.serial# "Serial#", 
+                  t2.username username, 
+                  t2.program program, 
+                  decode( to_char(t2.logon_time,'Day'), to_char(sysdate,'Day'), 'Today at ' || 
+                     to_char(t2.logon_time,'hh:mi:ssam'), 
+                         to_char(t2.logon_time,'Day mm/dd') || ' at ' || to_char(t2.logon_time,'hh:mi:ssam') ) "Login Time",  
+                  t3.pid "Oracle PID", 
+                  t3.spid "OS PID", 
+                  t2.osuser "OS User", 
+                  t2.resource_consumer_group "Resource Group", 
+                  t2.process "Client PID", 
+                  t2.status "Status", 
+                  t2.type, 
+                  t2.module, 
+                  t2.action, 
+                  t2.failover_type,
+                  t2.failover_method,
+                  t2.failed_over,              
+                  t3.program "Server Program", 
+                  t2.machine "Login Machine",  
+                  decode(lck.sid,null,null,lck.job_id) "Job Id",
+                  t2.service_name,
+                  t2.blocking_session,
+                  t2.blocking_session_status "Blocking Status",
+                  t2.event,
+                  obj.owner object_owner,
+                  obj.object_name object_name,
+                  obj.object_type,
+                  t2.pq_status, 
+                  t2.pdml_status,  
+                  t2.pddl_status, 
+                  to_char(pga_used_mem,'999,999,999') "PGA Used", 
+                  to_char(pga_alloc_mem,'999,999,999') "PGA Allocated", 
+                  to_char(t3.pga_freeable_mem,'999,999,999') "PGA Freeable", 
+                  to_char(t3.pga_max_mem,'999,999,999') "PGA Max" 
+                   from v$session t2, 
+                        v$process t3, 
+                       (select sid, id2 job_id from v$lock where type = 'JQ') lck,
+                        dba_objects obj 
+                   where t2.paddr = t3.addr 
+                     and lck.sid (+) = t2.sid
+                     and t2.row_wait_obj# = obj.object_id (+)                    
+                     and t2.sid = ?
+      </sql>   
+      <links>
+        <link>
+          <action> DB_SESS_ZOOM </action>
+          <column> blocking_session </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> blocking_session </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links>   
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> sid </name>
+        </var>
+      </bind-variables> 
+    </query>
+    
+    <query name="scheduler_job_history">
+      <title> Job History </title>
+      <name> scheduler_job_history </name>
+      <sql>
+                select to_char(log_date) log_date,owner,job_class,operation,status,user_name,client_id 
+                     from dba_scheduler_job_log                    
+                     where job_name = ?
+                     order by log_id
+      </sql>    
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> job_name </name>
+        </var>
+      </bind-variables> 
+    </query>
+    
+    <query name="globalservices">
+      <title> Global Services </title>
+      <name> globalservices </name>
+      <sql>
+select instance_name, service_name from sys.database_services order by instance_name
+      </sql>
+            
+      <bind-variables></bind-variables>
+      <links></links>     
+    </query>
+    
+
+
+    
+    <query name="sysstat">
+      <title> System Stats </title>
+      <name> sysstat </name>
+      <sql>
+          select class, name, value from v$sysstat where value != 0 order by class, name
+      </sql>  
+      <data-type> 1 </data-type>
+      <bind-variables></bind-variables>
+      <links></links>        
+    </query>
+    
+    <query name="scheduler_jobs">
+      <title> Scheduler </title>
+      <name> scheduler_jobs </name>
+      <sql>
+          select j1.owner, 
+                 j1.job_name,
+                 state, 
+                 decode(session_id,0,null,session_id) "sid",
+                 decode(running_instance,0,null,running_instance) "instance",
+                 decode(program_name,null,substr(job_action,1,100),program_name) job_action,
+                 job_class,
+                 to_char(next_run_date - systimestamp) next_date,
+                 repeat_interval
+            from dba_scheduler_jobs j1,
+                 dba_scheduler_running_jobs j2
+            where j1.owner = j2.owner (+)
+              and j1.job_name = j2.job_name (+)
+           order by (case state
+                       when 'RUNNING' then 0
+                       when 'SCHEDULED' then 1
+                       when 'SUCCEEDED' then 2
+                       when 'COMPLETED' then 3
+                       when 'BROKEN' then 4
+                       when 'DISABLED' then 5
+                     end),  
+                    next_run_date - systimestamp
+      </sql>    
+      <links>
+      <link>
+        <action> DB_SCHJOBS_HIST </action>
+        <column> job_name </column>
+        <linkvars>
+          <var>
+            <varname> job_name </varname>
+            <from-column> job_name </from-column>
+          </var>
+        </linkvars>
+      </link> 
+      <link>
+        <action> DB_SESS_ZOOM </action>
+        <column> sid </column>
+        <linkvars>
+          <var>
+            <varname> sid </varname>
+            <from-column> sid </from-column>
+          </var>
+        </linkvars>
+      </link>
+      </links>      
+    </query>
+    
+    <query name="streams_bg">
+      <title> BGD Sessions </title>
+      <name> streams_bg </name>
+      <sql>
+          select vs.sid "Sid", 
+                 vs.serial# "Ser#", 
+                 status "Status", 
+                 lower(vs.username) "Ora User", 
+                 lower(vs.module)  || ' ' || lower(vs.action) "App Info", 
+                 vs.osuser "OS User", 
+                 vbg.name "Name",
+                 vbg.description "Description",
+                 vs.program "Program",
+                 vp.spid "Server Pid",  
+                 to_char(vss.value,'99,999,999,999') "CPU",
+                 decode(vs.command, 0, ' ', 2,'Insert',3,'Select',6,'Update',45,'Rollback',7,'Delete',47,'Pl/sql',62,'Analyze',vs.command) "Cmd", 
+                 vsw.event "Current Wait Event",  
+                 vsw.p1 "P1",  
+                 vsw.p2 "P2",  
+                 vsw.p3 "P3",
+                 decode(lck.sid, null, null, lck.job_id) "Job" 
+              from v$session vs, 
+                   v$process vp, 
+                   v$bgprocess vbg, 
+                   v$session_wait vsw,
+                   v$sesstat vss,
+                   (select sid, id2 job_id from v$lock where type = 'JQ') lck 
+              where vs.paddr = vp.addr     
+                and vbg.paddr (+) = vp.addr       
+                and vs.sid   = vsw.sid     
+                and vs.sid   = lck.sid (+)
+                and vs.sid   = vss.sid (+)
+                and vss.statistic# = 12 -- CPU Used by this session
+                and (vs.type = 'BACKGROUND' or vs.username is null or vs.program like '%emagent%')
+                and (vs.program like '%(C00%' or vs.program like '%(P00%')
+              order by vs.status, vs.program
+      </sql> 
+            
+      <bind-variables></bind-variables>      
+      
+      <links>
+        <link>
+          <action> DB_SESS_ZOOM </action>
+          <column> sid </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+          </linkvars>
+        </link>
+        <link>
+          <action> DB_WAIT_DETAIL </action>
+          <column> Current Wait Event </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> sid </from-column>
+            </var>
+            <var>
+              <varname> event </varname>
+              <from-column> Current Wait Event </from-column>
+            </var>
+            <var>
+              <varname> p1 </varname>
+              <from-column> p1 </from-column>
+            </var>
+            <var>
+              <varname> p2 </varname>
+              <from-column> p2 </from-column>
+            </var>
+            <var>
+              <varname> p3 </varname>
+              <from-column> p3 </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links>
+      
+     </query>
+    
+     <query name="streams_trans">
+      <title> Streams Apply Trx </title>
+      <name> streams_trans </name>
+      <sql>
+select a.apply_name,
+       a.server_id inst,
+       a.sid apply_sid,
+       a.state apply_state,
+       to_char(a.total_messages_applied,'999,999,999') msgs_fromapply,
+       applied_message_create_time,
+       to_char(b.total_message_count,'999,999,999') ttlmsgs_fromtrx, 
+       to_char(b.cumulative_message_count,'999,999,999') cummsg_fromtrx,
+       b.first_message_time firstmsg_trxcreatetime, 
+       b.last_message_time lastmsg_trxcreatetime,
+       c.sql_id,
+       c.sql_text,
+       to_char(c.executions,'999,999,999') execs,
+       strm_admin.lcr_print.print_lcr_html(message) executing_spilledlcr
+  from GV$STREAMS_APPLY_SERVER a, 
+       GV$STREAMS_TRANSACTION b,
+       gv$sql c,
+       gv$session d,
+       sys.streams$_apply_spill_txn e,
+       sys.streams$_apply_spill_msgs_part f
+where a.apply_name like 'ONC%' and
+a.inst_id = b.inst_id and
+a.xidusn = b.xidusn and
+a.xidslt = b.xidslt and
+a.xidsqn = b.xidsqn and
+d.sid = a.sid and
+d.inst_id = a.inst_id and
+d.sql_id = c.sql_id (+) and
+d.inst_id = c.inst_id (+) and
+a.xidusn = e.xidusn (+)and
+a.xidslt = e.xidslt (+) and
+a.xidsqn = e.xidsqn (+) and
+e.txnkey = f.txnkey and
+a.message_sequence = f.sequence
+
+      </sql>   
+      <links>
+        <link>
+          <action> DB_SESS_ZOOM </action>
+          <column> apply_sid </column>
+          <linkvars>
+            <var>
+              <varname> sid </varname>
+              <from-column> apply_sid </from-column>
+            </var>
+          </linkvars>
+        </link>
+        <link>
+          <action> SQL_DETAIL </action>
+          <column> sql_id </column>
+          <linkvars>
+            <var>
+              <varname> sqlid </varname>
+              <from-column> sql_id </from-column>
+            </var>
+          </linkvars>
+        </link>     
+      </links>  
+    </query>
+    
+     <query name="sql_detail">
+      <title> SQL Stats </title>
+      <name> sql_detail </name>
+    <sql>
+        select sql_id,
+                        child_number "Child#", 
+                        executions "Execs", 
+                        fetches, 
+                        rows_processed, 
+                        round(decode(executions,0,0,rows_processed/decode(executions,0,.0000001,executions)),2) "Rows/Exec", 
+                        to_char(buffer_gets,'999,999,999,999') buffer_gets, 
+                        to_char(round(decode(executions,0,0,buffer_gets/decode(executions,0,.0000001,executions)),2),'999,999,999.99') "Gets/Exec", 
+                        sorts, 
+                        round(decode(executions,0,0,sorts/decode(executions,0,.0000001,executions)),2) "Sorts/Exec",  
+                        first_load_time, 
+                        last_load_time, 
+                        round(cpu_time/1000000,2) "CPU Secs", 
+                        round(elapsed_time/1000000,2) "Elapsed Secs",  
+                        round((elapsed_time/1000000)/decode(executions,0,.0000001,executions),5) "Elapsed/Exec", 
+                        round((cpu_time/1000000)/decode(executions,0,.0000001,executions),5) "CPU/Exec", 
+                        optimizer_cost, 
+                        parse_calls, 
+                        child_latch 
+                       from v$sql 
+                       where sql_id like ?
+                       order by buffer_gets desc 
+      </sql>
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> sqlid </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>
+    </query>
+
+    <query name="capture">
+      <title> Capture Config </title>
+      <name> capture </name>
+      <sql>
+		select capture_name, 
+			queue_owner||'.'||queue_name "Queue",
+			rule_set_owner,
+			rule_set_name,
+			status,
+			to_char(start_scn,'999,999,999,999,999') "Start SCN",
+			to_char(first_scn,'999,999,999,999,999') "First SCN",
+			to_char(captured_scn,'999,999,999,999,999') "Captured SCN",
+			to_char(applied_scn,'999,999,999,999,999') "Applied SCN",
+			--to_char(required_checkpoint_scn,'999,999,999,999,999') "Required SCN",
+			checkpoint_retention_time,
+			error_message
+		 from dba_capture
+      </sql>  
+      <bind-variables></bind-variables>
+      <links>
+        <link>
+          <action> DB_CAPTURE_DETAIL </action>
+          <column> capture_name </column>
+          <linkvars>
+            <var>
+              <varname> key </varname>
+              <from-column> capture_name </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links>        
+    </query>
+    
+    <query name="systemevents">
+      <title> System Events </title>
+      <name> systemevents </name>
+      <sql>
+         select
+           e.event,                                  
+           round(e.time_waited/100,0) "Secs Waited",  
+           round(e.average_wait/100,0) "Avg Wait", 
+           e.total_waits,                      
+           e.total_timeouts,
+           sum(decode(wait_time_milli, 1 , wait_count)) "1ms",
+           sum(decode(wait_time_milli, 2 , wait_count)) "2ms",
+           sum(decode(wait_time_milli, 4 , wait_count)) "4ms",
+           sum(decode(wait_time_milli, 8 , wait_count)) "8ms",
+           sum(decode(wait_time_milli, 16 , wait_count)) "16ms",
+           sum(decode(wait_time_milli, 32 , wait_count)) "32ms",
+           sum(decode(wait_time_milli, 64 , wait_count)) "64ms",
+           sum(decode(wait_time_milli, 128 , wait_count)) "128ms",
+           sum(decode(wait_time_milli, 256 , wait_count)) "256ms",
+           sum(decode(wait_time_milli, 512 , wait_count)) "512ms",
+           sum(decode(wait_time_milli, 1024 , wait_count)) "1024ms",
+           sum(case when wait_time_milli > 1024 then wait_count end) "> 1024ms"                 
+         from v$system_event e,
+              v$event_histogram h                                    
+         where e.event = h.event
+           and e.event not like 'PX%'   
+           and e.event not like 'Queue Monitor%' 
+           and e.event not in ('smon timer', 
+                     'class slave wait',
+                     'pmon timer', 
+                     'rdbms ipc message',
+                     'Null event',
+                     'parallel query dequeue',
+                     'pipe get',
+                     'client message',
+                     'SQL*Net message to client',
+                     'SQL*Net message from client',
+					 'SQL*Net more data from client',
+					 'SQL*Net more data to client',
+					 'rdbms ipc reply',
+					 'dispatcher timer',
+					 'virtual circuit status',
+					 'lock manager wait for remote message',
+					 'PX Idle Wait',
+				     'PX Deq: Execution Msg',
+					 'PX Deq: Table Q Normal',
+					 'wakeup time manager',
+					 'slave wait',
+					 'i/o slave wait',
+					 'jobq slave wait',
+					 'null event',
+					 'gcs remote message',
+					 'gcs for action',
+					 'ges remote message',
+					 'queue messages',
+					 'ARCH wait on SENDREQ',
+					 'wait for unread message on broadcast channel')
+	    group by e.event, e.time_waited, e.average_wait, e.total_waits, e.total_timeouts 
+        order by e.time_waited desc
+      </sql>  
+      <bind-variables></bind-variables>
+      <links>
+        <link>
+          <action> DB_WAIT_DETAIL </action>
+          <column> event </column>
+          <linkvars>
+            <var>
+              <varname> event </varname>
+              <from-column> event </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links>       
+    </query>
+    
+    <query name="timemodel">
+      <title> Session Time Model </title>
+      <name> timemodel </name>
+      <sql>
+        select stat_name, to_char(round(value/1000000,2),'999,999,999,999.99') value, 'Value' vtype from v$sess_time_model where sid = ?
+          and value > 0
+        union all 
+        select 'cpu to time ratio',to_char((t1.value/decode(t2.value,0,.000000001,t2.value))*100,'9,999.99')||'%' value, 'Ratio' vtype
+          from v$sess_time_model t1, 
+               v$sess_time_model t2
+          where t1.stat_name = 'DB CPU' 
+            and t2.stat_name = 'DB time'
+            and t1.sid = ?
+            and t2.sid = ?
+          order by 3 desc, 2 desc
+      </sql>  
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> sid </name>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> sid </name>
+        </var>
+        <var>
+          <position> 3 </position>
+          <name> sid </name>
+        </var>
+      </bind-variables>
+      <links>
+      </links>       
+    </query>
+    
+    <query name="recoveryarea">
+      <title> Recovery Area </title>
+      <name> recoveryarea </name>
+      <sql>
+        select name, 
+               to_char(space_limit/1024/1024,'999,999,999,999')||'M' recovery_area_size, 
+               to_char(space_used/1024/1024,'999,999,999,999')||'M' used,
+               to_char((space_limit-space_used)/1024/1024,'999,999,999,999')||'M' free,
+               to_char((1-(space_used/space_limit))*100,'999.99') pct_free,
+               to_char(space_reclaimable/1024/1024,'999,999,999,999')||'M' reclaimable,
+               number_of_files "File Count"
+               from v$recovery_file_dest
+      </sql>        
+    </query>
+    
+    <query name="intervalsql">
+      <title> Interval SQL </title>
+      <name> intervalsql </name>
+      <sql>
+         select u.username "User",
+                sa.address "Address", 
+                sa.hash_value "Hash", 
+                substr(sa.sql_text,1,80) "SQL", 
+                to_char(sum(s.rows_processed),'999,999,999,999') "Rows Processed", 
+                to_char(round(decode(sum(s.rows_processed),0,0,max(s.buffer_gets/decode(s.rows_processed,0,.0000001,s.rows_processed))),0),'999,999,999,999') "Buffer Gets Per Row", 
+                to_char(sum(s.executions),'999,999,999,999') "Execs", 
+                'SQL' " ", 
+                'Explain' " ",
+                decode(s.hash_value, null, '', 'SQL Area') " ", 
+                decode(sps.hash_value, null, '', 'Runtime Plan') " " 
+            from v$sqlarea sa,         
+                 v$sql_plan_statistics sps, 
+                 v$sql s, 
+                 dba_users u, 
+                 v$active_session_history hist 
+            where sa.hash_value = sps.hash_value (+) 
+              and sa.hash_value = s.hash_value (+) 
+              and sa.address    = s.address (+) 
+              and sa.parsing_user_id = u.user_id (+) 
+              and sa.sql_id = hist.sql_id 
+              and hist.sample_time between ? and ? 
+              and hist.sql_id is not null 
+            group by s.executions, s.buffer_gets, u.username, sa.address, sa.hash_value, 
+                     substr(sa.sql_text,1,80), s.hash_value, sps.hash_value, s.rows_processed 
+            order by decode(sum(s.rows_processed),0,0,sum(s.buffer_gets)/decode(sum(s.rows_processed),0,.0000001,sum(s.rows_processed))) desc
+      </sql> 
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> start_time </name>
+          <datatype> java.sql.TimeStamp </datatype>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> end_time </name>
+          <datatype> java.sql.TimeStamp </datatype>
+        </var>
+      </bind-variables>
+             
+    </query>
+    
+    <query name="queuetables">
+      <title> Queue Tables </title>
+      <name> queuetables </name>
+      <sql>
+        select * from dba_queue_tables where owner = 'IFC_ADMIN'
+      </sql>        
+    </query>
+    
+    <query name="queuemaster">
+      <title> Available Queues </title>
+      <name> queuemaster </name>
+      <sql>
+        select * from ifc_admin.message_queue_master
+      </sql>        
+    </query>
+    
+    <query name="queue_enq_errors">
+      <title> Enqueue Errors </title>
+      <name> queue_enq_errors </name>
+      <sql>
+        select message_type, error_msg, error_date from ifc_admin.message_enq_errors
+                    where message_type like ? 
+          order by error_date desc
+      </sql> 
+                
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> messagetype </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>
+             
+    </query>
+    
+    <query name="streams_apply_inst_tables">
+      <title> Apply Instantiated Tables </title>
+      <name> streams_apply_inst_tables </name>
+      <sql>
+        select * from dba_apply_instantiated_objects
+                    where source_database = ?
+                      and source_object_owner = ? 
+          order by source_object_name
+      </sql> 
+                
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> sourcedb </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> sourceschema </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>
+             
+    </query>
+    
+        <query name="shreddererrorsummary">
+      <title> Shredder Errors </title>
+      <name> shreddererrorsummary </name>
+      <sql>
+		select t1.message_type, substr(error_msg,1,60) error_msg, 
+		       count(*) Error_count,
+		       to_char(min(error_date),'mm/dd/yyyy hh24:mi:ss') earliest_error,
+		       to_char(max(error_date),'mm/dd/yyyy hh24:mi:ss') latest_error,
+		       round(((max(error_date)-min(error_date))*1440),0) minute_span,
+		       round(avg(retry_count),0) avg_retries
+		       from (
+        	select message_type, error_msg, error_date, failures retry_count, handler_id, queue_data_type from ifc_admin.message_deq_errors 
+			union all
+       	 	select message_type, error_msg, error_date, failures retry_count, handler_id, 'LCR' from ifc_admin.message_lcr_deq_errors 
+       	 ) t1,
+       	   ifc_admin.message_handlers t2
+          where t1.handler_id = t2.handler_id (+)
+            and t1.message_type = t2.message_type (+)
+            and t1.message_type like ? 
+          group by t1.message_type, substr(t1.error_msg,1,60)
+          order by max(error_date) desc,t1.message_type, substr(t1.error_msg,1,60)
+      </sql>    
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> messagetype </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>
+      
+
+               
+    </query>
+    
+    
+    <query name="queue_deq_errors">
+      <title> Shredder Errors </title>
+      <name> queue_deq_errors </name>
+      <sql>
+		select t1.*,t2.handler "Shredder" From (
+        	select message_type, error_msg, to_char(error_date,'mm/dd/yyyy hh24:mi:ss') original_error_date, failures retries, handler_id, queue_data_type "Data Type", error_date from ifc_admin.message_deq_errors 
+			union all
+       	 	select message_type, error_msg, to_char(error_date,'mm/dd/yyyy hh24:mi:ss') original_error_date, failures retries, handler_id, 'LCR' "Data Type", error_date from ifc_admin.message_lcr_deq_errors 
+       	 ) t1,
+       	   ifc_admin.message_handlers t2
+          where t1.handler_id   = t2.handler_id (+)
+            and t1.message_type = t2.message_type (+)
+            and t1.message_type like ? 
+          order by t1.error_date desc
+      </sql>    
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> messagetype </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>
+      
+      <links>    
+      
+         <link>
+          <action> DB_AQ_DEQ_ERROR_XML </action>
+          <column> message_type </column>
+          <linkvars>
+            <var>
+              <varname> messagetype </varname>
+              <from-column> message_type </from-column>
+            </var>
+            <var>
+              <varname> errormsg </varname>
+              <from-column> error_msg </from-column>
+            </var>
+            <var>
+              <varname> errordate </varname>
+              <from-column> original_error_date </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links>    
+      
+        
+    </query>
+    
+
+    <query name="queue_deq_error_xml">
+      <title> Errored Message Payload</title>
+      <name> queue_deq_error_xml </name>
+      <sql>           
+         select    message_type,
+                   CASE d.xml_packet
+                   WHEN null then d.clob_packet
+                   WHEN ' ' then d.clob_packet
+                   ELSE dbms_lob.substr(d.xml_packet,3999,1)
+                   END message_payload,
+                   d.thrown_error
+           from ifc_admin.message_deq_errors_view d
+           where message_type = ?
+             --and (replace(replace(replace(thrown_error,chr(10),null),chr(13),null),'''',null) = ? or thrown_error is null)
+             and to_char(thrown_on_date,'mm/dd/yyyy hh24:mi:ss') = ?
+      </sql>  
+      
+      <preformats>
+      	<preformat column-name="message_payload"/>
+      </preformats>
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> messagetype </name>
+          <default-value> % </default-value>
+        </var>
+        <!--  <var>
+          <position> 2 </position>
+          <name> errormsg </name>
+          <default-value> % </default-value>
+        </var>-->
+        <var>
+          <position> 2 </position>
+          <name> errordate </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>      
+    </query>
+
+    <query name="queue_deq_error_xml2">
+      <title> Errored XML Message </title>
+      <name> queue_deq_error_xml2 </name>
+      <sql>    
+select replace(xml_packet, chr(32), chr(38)||'nbsp;') xml_packet,
+       replace(clob_packet, chr(32), chr(38)||'nbsp;') clob_packet from (
+select replace(xml_packet,chr(60),'{') xml_packet,
+       replace(clob_packet,chr(60),'{') clob_packet from (        
+         select replace(substr(d.xml_packet,1,2000),chr(62),'}') xml_packet,
+                replace(substr(d.clob_packet,1,2000),chr(62),'}') clob_packet
+           from ifc_admin.message_deq_errors d
+           where message_type = ?
+             and replace(replace(replace(error_msg,chr(10),null),chr(13),null),'''',null) = ?
+             and to_char(error_date,'mm/dd/yyyy hh24:mi:ss') = ?)
+  union all
+    select strm_admin.lcr_print.print_lcr_html(sys.anydata.convertObject(xml_packet)) xml_packet,
+           '' clob_packet
+    from ifc_admin.message_lcr_deq_errors
+  where message_type = ?
+    and replace(replace(replace(error_msg,chr(10),null),chr(13),null),'''',null) = ?
+    and to_char(error_date,'mm/dd/yyyy hh24:mi:ss') = ?
+    )
+      </sql>  
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> messagetype </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> errormsg </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 3 </position>
+          <name> errordate </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 4 </position>
+          <name> messagetype </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 5 </position>
+          <name> errormsg </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 6 </position>
+          <name> errordate </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>      
+    </query>
+    
+    <query name="queuemaps">
+      <title> Remote Queue Maps </title>
+      <name> queuemaps </name>
+      <sql>    
+select q.queue_table "Source Queue Table", 
+       qs.qname "Source Queue",  
+       '  ---->  ' "Direction", 
+       qs.destination "Destination DB", 
+       s.address "Destination Queue" 
+  from dba_queue_schedules qs, 
+       dba_queue_subscribers s, 
+       dba_queues q
+  where qs.qname = s.queue_name
+    and q.name = qs.qname
+    and s.consumer_name is null
+      </sql>        
+    </query>
+    
+    <query name="db_tab_modifications">
+      <title> Table Modifications </title>
+      <name> db_tab_modifications </name>
+      <sql>    
+select * from sys.dba_tab_modifications where table_owner = ? order by table_name 
+      </sql>    
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> username </name>
+        </var>
+      </bind-variables>      
+    </query>
+    
+    <query name="db_tab_statistics">
+      <title> Table Statistics </title>
+      <name> db_tab_statistics </name>
+      <sql>    
+select  m.table_name, t.partition_name, t.subpartition_name, last_analyzed, to_char((sysdate-t.last_analyzed),'9,999.9') days_ago_analyzed,
+        m.inserts, m.updates, m.deletes
+  from sys.dba_tab_statistics t,
+       sys.dba_tab_modifications m
+where owner = ?
+  and t.table_name = m.table_name
+  and t.owner = m.table_owner                       
+order by t.table_name, t.partition_name, t.subpartition_name desc
+      </sql>    
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> username </name>
+        </var>
+      </bind-variables>      
+    </query>
+    
+    <query name="messagelatency">
+      <title> Message Latency </title>
+      <name> messagelatency </name>
+      <sql>    
+        select type, 
+               stream, 
+               apply_name "Destination Name", 
+               description "Direction", 
+               to_char(heartbeat_latency,'999,999,999.99') "Heartbeat Latency", 
+               to_char(message_latency,'999,999,999.99') "Last Message Latency", 
+               to_char(last_dequeue_minutes_ago,'999,999,999.99') "Last Deq Mins Ago",
+               source_db,
+               strm_admin.str_monitor.geterrorcount(stream) Errors
+          from strm_admin.streams_summary_view
+          order by type desc, stream
+      </sql>  
+      
+      <links>
+        <link>
+          <action> Q_MESSAGES_EXT </action>
+          <column> Destination Name </column>
+          <linkvars>
+            <var>
+              <varname> queuename </varname>
+              <from-column> Destination Name </from-column>
+            </var>
+          </linkvars>
+        </link> 
+      </links>      
+    </query>
+
+    
+    
+    <query name="propagations">
+      <title> AQ Queue Schedules </title>
+      <name> propagations </name>
+      <sql>    
+    SELECT propagation_name "Name",
+                      s.schema || '.' || qname "Queue",
+                      sub.address "Destination",
+                      s.NEXT_TIME "Next Time",
+                      s.LATENCY "Latency",
+                      s.schedule_disabled "Disabled",
+                      PROCESS_NAME "Job", 
+                      substr(s.session_id,1,instr(s.session_id,',')-1) "sid" ,
+                      instance,
+                      to_char(s.total_time,'999,999,999,999') total_time, 
+                      to_char(s.total_number,'999,999,999,999') total_number, 
+                      to_char(s.total_bytes,'999,999,999,999') total_bytes,
+                      to_char(avg_size,'999,999,999') avg_size,
+                      to_char(avg_time,'999,999.999') avg_time, 
+                      last_error_msg "Error",
+                      last_error_time "Error Time", 
+                      failures
+                       FROM DBA_QUEUE_SCHEDULES s,
+                            DBA_PROPAGATION p,
+                            DBA_QUEUE_SUBSCRIBERS sub 
+                       WHERE s.DESTINATION = p.DESTINATION_DBLINK (+) 
+                         AND s.SCHEMA      = p.SOURCE_QUEUE_OWNER (+) 
+                         AND s.QNAME       = p.SOURCE_QUEUE_NAME (+) 
+                         AND s.QNAME       = sub.QUEUE_NAME
+                         AND sub.consumer_name is null
+                         
+      </sql>        
+    </query>
+    
+    <query name="queuerouting">
+      <title> Message Routing </title>
+      <name> queuerouting </name>
+      <sql>    
+select distinct mq.message_type, 
+       mq.queue_name, 
+       mq.comments, 
+       mq.email, 
+       nvl(ifc_admin.get_payload(mq.message_type),'No Queue Found') payload,
+       nvl(ifc_admin.get_destination(mq.message_type),'Local') destination,
+       (select decode(count(*),0,null,count(*)) from ifc_admin.message_enq_errors mee where mee.message_type = mq.message_type) errors 
+  from ifc_admin.message_queues mq 
+  order by mq.message_type
+      </sql>  
+      
+      <links>    
+      
+         <link>
+          <action> DB_AQ_ENQ_ERRORS </action>
+          <column> errors </column>
+          <linkvars>
+            <var>
+              <varname> messagetype </varname>
+              <from-column> message_type </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links> 
+            
+    </query>
+    
+    <query name="messagehandlers">
+      <title> Message Shredders </title>
+      <name> messagehandlers </name>
+      <sql>    
+select message_type, 
+       handler shredder_procedure,
+       handler_id id,
+       handler_priority run_order,
+       enabled enbl,
+       email email_notification
+  from ifc_admin.message_handlers mh
+  order by message_type, handler_priority
+      </sql>  
+    </query>
+      
+    <query name="shredderstats">
+      <title> Message Shredders </title>
+      <name> shredderstats </name>
+      <sql>    
+select mh.message_type, 
+       mh.handler shredder_procedure,
+       (select decode(count(*),0,null,count(*)) from ifc_admin.message_deq_errors mde where mde.message_type = mh.message_type and mde.handler_id=mh.handler_id) xml_errors,
+       (select decode(count(*),0,null,count(*)) from ifc_admin.message_lcr_deq_errors mde where mde.message_type = mh.message_type and mde.handler_id=mh.handler_id) lcr_errors,
+       mh.email,
+       to_char(total_messages,'999,999,999,999') total_messsages,
+       to_char(
+         case 
+           when mh.handler like 'com.%' then mh.handler_execution_time
+           when mh.handler not like 'com.%' then (mh.handler_execution_time * 1000)
+         end
+         ,'999,999') || ' ms' shredder_runtime,
+       to_char(am.per_second,'999.99') per_second
+  from ifc_admin.message_handlers mh,
+         (select aq_component_name message_type,
+         per_second
+    from ifc_admin.aq_metrics am
+    where aq_component_type = 'Shredder'
+      and snapshot_time = (select max(snapshot_time) from ifc_admin.aq_metrics
+                             where aq_component_name = am.aq_component_name)) am
+  where mh.message_type = am.message_type (+)
+  order by message_type,handler_priority
+      </sql> 
+      
+      <links>       
+         <link>
+          <action> DB_AQ_DEQ_ERRORS </action>
+          <column> xml_errors </column>
+          <linkvars>
+            <var>
+              <varname> messagetype </varname>
+              <from-column> message_type </from-column>
+            </var>
+          </linkvars>
+        </link>
+        <link>
+          <action> DB_AQ_DEQ_ERRORS </action>
+          <column> lcr_errors </column>
+          <linkvars>
+            <var>
+              <varname> messagetype </varname>
+              <from-column> message_type </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links> 
+        
+    </query> 
+      
+    <query name="destmsgtypes">
+      <title> Dest Messages </title>
+      <name> destmsgtypes </name>
+      <sql>    
+select message_type, 
+       (select decode(count(*),0,null,count(*)) from ifc_admin.message_deq_errors mde where mde.message_type = mh.message_type) errors,
+       to_char(total_messages,'999,999,999,999') total_messsages,
+       to_char(round(latency/60,2),'999,999.99') lastmessage_latency,
+       to_char(round((sysdate-last_heartbeat)*1440,2),'999,999.99') heartbeat_latency,
+       queue_name last_dequeued_from,
+       (select max(last_shred) from ifc_admin.message_handlers where message_type = mh.message_type) last_shred_time,
+       heartbeat_from_db heartbeat_from,
+       enabled enbl
+  from ifc_admin.message_types mh order by message_type
+      </sql>  
+      
+      <links>       
+         <link>
+          <action> DB_AQ_DEQ_ERRORS </action>
+          <column> errors </column>
+          <linkvars>
+            <var>
+              <varname> messagetype </varname>
+              <from-column> message_type </from-column>
+            </var>
+          </linkvars>
+        </link>
+      </links>        
+    </query> 
+      
+    <query name="messageshredders">
+      <title> Shredders </title>
+      <name> messageshredders </name>
+      <sql>    
+          select j1.owner, 
+                 j1.job_name, 
+                 program_name,
+                 job_action,
+                 job_creator, 
+                 to_char(start_date,'mm/dd/yyyy hh24:mi') start_date,
+                 to_char(last_start_date,'mm/dd/yyyy hh24:mi') last_date,
+                 to_char(next_run_date,'mm/dd/yyyy hh24:mi') next_date,
+                 job_class,
+                 state,
+                 decode(session_id,0,null,session_id) "sid",
+                 decode(running_instance,0,null,running_instance) "instance"
+            from dba_scheduler_jobs j1,
+                 dba_scheduler_running_jobs j2
+            where j1.owner = j2.owner (+)
+              and j1.job_name = j2.job_name (+)
+              and job_class = 'SHREDDER_CLASS'
+           order by decode(state,'RUNNING',0,1), decode(next_run_date,null,sysdate+999999,next_run_date)
+      </sql>                   
+    </query>
+
+   <query name="sessiontime">
+      <title> Session Time Allocation </title>
+      <name> sessiontime </name>
+      <sql>
+with all_time as (
+        select /*+ materialize */ 
+           case 
+             when sum(seconds) is null then .0000001
+             when sum(seconds) = 0 then     .0000001
+             else sum(seconds)
+           end case
+    from (select wait_class "Title", round(time_waited/100,0) seconds
+         from v$session_wait_class where sid = ?
+         and round(time_waited/100,0)>0
+        union all
+        select 'On CPU', round(value/1000000,0) seconds from v$sess_time_model where sid = ?
+          and stat_name = 'DB CPU' and value>0))
+          
+select wait_class || ' Waits' "Title", to_char(round(time_waited/100,1),'999,999,999.9') seconds, to_char(round(round(time_waited/100,0)/(select * from all_time)*100,2),'999.99')||'%' percent
+         from v$session_wait_class where sid = ?
+         and round(time_waited/100,0)>0
+union all
+select 'On CPU', to_char(round(value/1000000,1),'999,999,999.9') seconds, to_char(round(round(value/1000000,0)/(select * from all_time)*100,2),'999.99')||'%' percent from v$sess_time_model where sid = ?
+          and stat_name = 'DB CPU' and value>0
+       order by 2 desc
+      </sql>
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> sid </name>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> sid </name>
+        </var>
+        <var>
+          <position> 3 </position>
+          <name> sid </name>
+        </var>
+        <var>
+          <position> 4 </position>
+          <name> sid </name>
+        </var>
+      </bind-variables>       
+      <links></links>      
+    </query>
+       
+  </queries>
+  
+</powerdba-query-list>
+

@@ -1,0 +1,224 @@
+<powerdba-lookupgroup-list>
+
+	<display-groups>
+		
+	  <display-group name="sessions">
+	  	
+	  	<lookups>
+			
+			<lookup name="sessionstatus">
+				<label> Status </label>
+				<display-priority> 1 </display-priority>
+				<select-entries>
+					<select-entry>
+						<value> % </value>
+						<display> ANY </display>
+						<order> 1 </order>
+					</select-entry>
+					<select-entry>
+						<value> ACTIVE </value>
+						<display> ACTIVE </display>
+						<order> 2 </order>
+					</select-entry>
+					<select-entry>
+						<value> INACTIVE </value>
+						<display> INACTIVE </display>
+						<order> 3 </order>
+					</select-entry>
+				</select-entries>
+				<initial-value> ACTIVE </initial-value>
+			</lookup>
+			
+			<lookup name="oracleuser">
+				<label> User </label>
+				<display-priority> 2 </display-priority>
+				<select-entries>
+					<select-entry>
+						<value> % </value>
+						<display> ANY </display>
+						<order> -99 </order>
+					</select-entry>
+				</select-entries>
+			</lookup>
+			
+			<lookup name="service">
+				<label> Service </label>
+				<display-priority> 3 </display-priority>
+				<select-entries>
+					<select-entry>
+						<value> % </value>
+						<display> ANY </display>
+						<order> -99 </order>
+					</select-entry>
+				</select-entries>
+			</lookup>
+			
+			<lookup name="module">
+				<label> Module </label>
+				<display-priority> 4 </display-priority>
+				<select-entries>
+					<select-entry>
+						<value> % </value>
+						<display> ANY </display>
+						<order> -99 </order>
+					</select-entry>
+				</select-entries>
+			</lookup>
+			
+			<lookup name="machine">
+				<label> Machine </label>
+				<display-priority> 5 </display-priority>
+				<select-entries>
+					<select-entry>
+						<value> % </value>
+						<display> ANY </display>
+						<order> -99 </order>
+					</select-entry>
+				</select-entries>
+			</lookup>
+
+			<lookup name="statistic">
+				<label> Statistic </label>
+				<display-priority> 6 </display-priority>
+				<initial-value> 9 </initial-value>
+			</lookup>
+		
+		</lookups>
+		
+	  </display-group>
+	  
+	  <display-group name="locks">	  	
+	  	<lookups>
+	  		<lookup name="sessiontype">
+	  			<label> Session Type </label>
+	  			<display-priority> 1 </display-priority>
+	  		</lookup>
+	  	</lookups>
+	  </display-group>
+
+	  
+	  <display-group name="schemas">	  	
+	  	<lookups>
+	  		<lookup name="firstletter">
+	  			<label> Schema Filter </label>
+	  			<display-priority> 1 </display-priority>
+				<select-entries>
+					<select-entry>
+						<value> % </value>
+						<display> ALL </display>
+						<order> -99 </order>
+					</select-entry>
+				</select-entries>
+	  			<initial-value> % </initial-value>
+	  		</lookup>
+	  	</lookups>
+	  </display-group>
+	  
+	  <display-group name="deq_message_types">	  	
+	  	<lookups>
+	  		<lookup name="messagetype">
+	  			<label> Message Type </label>
+	  			<display-priority> 1 </display-priority>
+				<select-entries>
+					<select-entry>
+						<value> % </value>
+						<display> ALL </display>
+						<order> -99 </order>
+					</select-entry>
+				</select-entries>
+	  			<initial-value> % </initial-value>
+	  		</lookup>
+	  	</lookups>
+	  </display-group>
+	  	  
+	  <display-group name="enq_message_types">	  	
+	  	<lookups>
+	  		<lookup name="messagetype">
+	  			<label> Message Type </label>
+	  			<display-priority> 1 </display-priority>
+				<select-entries>
+					<select-entry>
+						<value> % </value>
+						<display> ALL </display>
+						<order> -99 </order>
+					</select-entry>
+				</select-entries>
+	  			<initial-value> % </initial-value>
+	  		</lookup>
+	  	</lookups>
+	  </display-group>
+	  
+	  <display-group name="queues">	  	
+	  	<lookups>
+	  		<lookup name="queue">
+	  			<label> Queue Filter </label>
+	  			<display-priority> 1 </display-priority>
+				<select-entries>
+					<select-entry>
+						<value> % </value>
+						<display> ALL </display>
+						<order> -99 </order>
+					</select-entry>
+				</select-entries>
+	  			<initial-value> % </initial-value>
+	  		</lookup>
+	  	</lookups>
+	  </display-group>
+	  
+	  <display-group name="applyprocs">	  	
+	  	<lookups>
+	  		<lookup name="applyproc">
+	  			<label> Apply Filter </label>
+	  			<display-priority> 1 </display-priority>
+				<select-entries>
+					<select-entry>
+						<value> % </value>
+						<display> ALL </display>
+						<order> -99 </order>
+					</select-entry>
+				</select-entries>
+	  			<initial-value> % </initial-value>
+	  		</lookup>
+	  	</lookups>
+	  </display-group>
+	  
+	  <display-group name="pga_detail">	  	
+	  	<lookups>
+			<lookup name="module">
+				<label> Module </label>
+				<display-priority> 1 </display-priority>
+				<select-entries>
+					<select-entry>
+						<value> % </value>
+						<display> ANY </display>
+						<order> -99 </order>
+					</select-entry>
+				</select-entries>
+			</lookup>
+			<lookup name="machine">
+				<label> Machine </label>
+				<display-priority> 2 </display-priority>
+				<select-entries>
+					<select-entry>
+						<value> % </value>
+						<display> ANY </display>
+						<order> -99 </order>
+					</select-entry>
+				</select-entries>
+			</lookup>
+	  	</lookups>
+	  </display-group>
+
+	  
+	  <display-group name="weblogicsessions">	  	
+	  	<lookups>
+	  		<lookup name="weblogicserver">
+	  			<label> Server </label>
+	  			<display-priority> 1 </display-priority>
+	  		</lookup>
+	  	</lookups>
+	  </display-group>
+	  
+	</display-groups>
+
+</powerdba-lookupgroup-list>

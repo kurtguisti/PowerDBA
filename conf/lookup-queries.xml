@@ -1,0 +1,107 @@
+<powerdba-lookupquery-list>
+	<lookup-queries>
+		
+		<lookup-query name="queues">
+			<sql>
+			select distinct rtrim('queue') ltype, owner||'.'||name lvalue, owner||'.'||name ldisplay from dba_queues
+			  where owner not in ('SYS','SYSTEM','WKSYS','WMSYS','SYSMAN','IX')
+			</sql>
+		</lookup-query>
+		
+		<lookup-query name="applyprocs">
+			<sql>
+			select distinct rtrim('applyproc') ltype, apply_name lvalue, apply_name ldisplay from dba_apply
+			</sql>
+		</lookup-query>
+		
+		<lookup-query name="pga_detail">
+			<sql>
+			select distinct rtrim('module') ltype, nvl(module,'NA') lvalue, module ldisplay from gv$session 
+			  where username is not null and (module != 'Power*DBA' or module is null) and module is not null
+			  group by rtrim('module'), module
+			union all 
+			select distinct rtrim('machine') ltype, nvl(machine,'NA') lvalue, nvl(machine,'NA') ldisplay from gv$session 
+			  where username is not null and (module != 'Power*DBA' or module is null)  
+			</sql>
+		</lookup-query>
+		
+		<lookup-query name="sessions">
+			<sql>
+			select rtrim('oracleuser') ltype, username lvalue, username ldisplay from v$session
+			  where username is not null and (module != 'Power*DBA' or module is null)
+			  group by rtrim('oracleuser'), username
+			union all
+			select distinct rtrim('module') ltype, nvl(module,'NA') lvalue, module ldisplay from v$session 
+			  where username is not null and (module != 'Power*DBA' or module is null) and module is not null
+			  group by rtrim('module'), module 
+			union all 
+			select distinct rtrim('machine') ltype, nvl(machine,'NA') lvalue, nvl(machine,'NA') ldisplay from v$session 
+			  where username is not null and (module != 'Power*DBA' or module is null) and module is not null
+			  group by rtrim('machine'), machine
+			union all 
+			select distinct rtrim('service') ltype, nvl(service_name,'NA') lvalue, nvl(service_name,'NA') ldisplay from v$session 
+			  where username is not null and (module != 'Power*DBA' or module is null) and module is not null
+			  group by   rtrim('service'), service_name
+			union all 
+			select rtrim('statistic'), to_char(statistic#) lvalue, lower(name) ldisplay  from v$statname
+			 where (name like '%parse%' or name like '%sort%' 
+			 or name like '%gets%' or name like '%mamory%' or name='user calls' 
+			 or name ='recursive calls' or name like '%commits%' or name like '%cursor%' 
+			 or name like '%pga%' or name='session logical reads') and name not like '%cleanout%' order by 1,3							
+			</sql>
+		</lookup-query>
+		
+		<lookup-query name="locks">
+			<sql>
+	select distinct rtrim('sessiontype'), type, type from gv$session
+	  where username is not null and (module != 'Power*DBA' or module is null)
+      order by 1,3							
+			</sql>
+		</lookup-query>
+		
+		<lookup-query name="schemas">
+			<sql>
+		 select distinct rtrim('firstletter'), t.first_letter, t.first_letter from
+		   (select substr(username,1,1) first_letter from dba_users order by 1) t
+		   order by 2						
+			</sql>
+		</lookup-query>
+		
+		<lookup-query name="deq_message_types">
+			<sql>
+			select  rtrim('messagetype'), t.message_type, t.message_type || ' (' || count(*) || ')' from
+			                    ifc_admin.message_deq_errors t
+			                    group by message_type
+			union all
+			select  rtrim('messagetype'), t.message_type, t.message_type || ' (' || count(*) || ')' from
+                    ifc_admin.message_lcr_deq_errors t
+                    group by message_type
+		   order by 1						
+			</sql>
+		</lookup-query>
+		
+		<lookup-query name="enq_message_types">
+			<sql>
+		 select distinct rtrim('messagetype'), t.message_type, t.message_type from
+		   (select message_type from ifc_admin.message_enq_errors) t
+		   order by 1						
+			</sql>
+		</lookup-query>
+		
+		
+		<lookup-query name="weblogic_sessions">
+			<sql>
+		 select distinct rtrim('weblogicserver'), t.machine, t.machine from
+		   gv$session where module like 'N/A-%'
+		   order by 1						
+			</sql>
+		</lookup-query>
+		
+<!--		<lookup-query name="schemas">
+			<sql>
+		 		select snap_id from odm_admin.odm_session_history_snap					
+			</sql>
+		</lookup-query>
+-->		
+	</lookup-queries>
+</powerdba-lookupquery-list>

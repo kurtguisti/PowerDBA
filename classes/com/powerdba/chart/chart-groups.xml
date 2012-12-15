@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='windows-1252'?>
+
+<powerdba-chartgroup-list>
+	
+  <chart-groups>
+  
+    <chart-group name="MESSAGE_GENERATION_RATE_OWR">
+      <description> </description>
+      <charts>
+        <chart name="SKT_QRATE"/>
+        <chart name="CHK_QRATE"/>
+      </charts>
+      <width> 300 </width>
+      <height> 200 </height>
+      <columns> 4 </columns>
+    </chart-group>
+    
+    <chart-group name="CHARTS_ACTIVE_SESSIONS_OWR">
+      <description> Cluster Wide Active Sessions </description>
+      <charts>
+        <chart name="ACTIVE_SESSIONS"/>
+      </charts>
+      <width> 1000 </width>
+      <height> 650 </height>
+      <columns> 1 </columns>
+    </chart-group>
+    
+    <chart-group name="CHARTS_ACTIVE_SESSIONSBYSERVICE_OWR">
+      <description> Cluster Wide Active Sessions </description>
+      <charts>
+        <chart name="ACTIVE_SESSIONS_BY_SERVICE"/>
+        <chart name="BUFFER_GETS_BY_SERVICE"/>
+      </charts>
+      <width> 500 </width>
+      <height> 325 </height>
+      <columns> 2 </columns>
+    </chart-group>
+    
+    <chart-group name="SHREDDER_THROUGHPUT_OWR">
+      <description> </description>
+      <charts>
+        <chart name="SKT_THROUGHPUT"/>
+        <chart name="CHK_THROUGHPUT"/>
+        <chart name="VIPVINEVT_THROUGHPUT"/>
+        <chart name="CPU"/>
+      </charts>
+      <width> 600 </width>
+      <height> 400 </height>
+      <columns> 2 </columns>
+    </chart-group>
+
+    <chart-group name="SUMMARY">
+      <description> </description>
+      <charts>
+        <chart name="SESSIONS_BY_STATUS"/>
+        <chart name="PGA_BY_MACHINE"/>
+        <chart name="ARCHIVE_STATUS"/>
+        <chart name="SESSIONS_BY_USER"/>
+        <chart name="REDO_HISTORY"/>
+        <chart name="ACTIVITY_HISTORY"/>
+        <chart name="WAITS_HISTORY"/>
+        <chart name="CACHE_HISTORY"/>
+        <chart name="PARSING_HISTORY"/>        
+        <chart name="BUFFER_WAITS_HISTORY"/>
+        <chart name="SYSTEM_IO_HISTORY"/>
+        <chart name="SORT1_HISTORY"/>
+      </charts>
+      <width> 300 </width>
+      <height> 200 </height>
+      <columns> 4 </columns>
+    </chart-group>
+    
+    <chart-group name="SUMMARY_OWR">
+      <description> </description>
+      <charts>
+        <chart name="CPU"/>
+        <chart name="NETWORK"/>
+        <chart name="WAITS"/>
+        <chart name="LOGINSPERSEC"/>
+        <chart name="OWR_IO"/>
+        <chart name="ACTIVITY2PERSEC"/>
+        <chart name="HIT_RATIOS"/>
+        <chart name="SHAREDPOOLFREE"/>
+        <chart name="SESSIONS_BY_USER"/>
+        <!--<chart name="PGA_BY_MACHINE"/>-->
+        <chart name="SESSIONS_BY_STATUS"/>
+        <chart name="ACTIVE_SESSIONS"/>
+        <chart name="ACTIVE_SESSIONS_BY_EVENT"/>
+        <chart name="ARCHIVE_STATUS"/>
+                <chart name="SKT_THROUGHPUT"/>
+        <chart name="VIPVINEVT_THROUGHPUT"/>
+      </charts>
+      <width> 300 </width>
+      <height> 200 </height>
+      <columns> 4 </columns>
+    </chart-group>
+    
+    <chart-group name="CLUSTER_WIDE_OWR">
+      <description> </description>
+      <charts>
+        <chart name="CPU"/>
+        <chart name="EXECUTIONS"/>
+        <chart name="LOGICALREADS"/>
+        <chart name="REDOGENERATED"/>
+        <chart name="NETWORK"/>
+        <chart name="WAITS"/>
+        <chart name="OWR_RIO"/>
+        <chart name="OWR_WIO"/>
+        <chart name="LOGINSPERSEC"/>
+        <chart name="CURRENTLOGONS"/>
+        <chart name="GCCR"/>
+        <chart name="GCCURR"/>
+        <chart name="RESPONSE"/>
+        <chart name="TXNRESPONSE"/>
+        <chart name="TABLESCANS"/>
+        <chart name="EXECWOPARSE"/>
+      </charts>
+      <width> 300 </width>
+      <height> 175 </height>
+      <columns> 4 </columns>
+    </chart-group>
+    
+    <chart-group name="CLUSTER_CPUIO_OWR">
+      <description> </description>
+      <charts>
+        <chart name="CPU"/>
+        <chart name="OWR_RIO"/>
+        <chart name="OWR_WIO"/>
+      </charts>
+      <width> 600 </width>
+      <height> 350 </height>
+      <columns> 2 </columns>
+    </chart-group>
+    
+    <chart-group name="CLUSTER_CPU_OWR">
+      <description> </description>
+      <charts>
+        <chart name="CPU"/>
+      </charts>
+      <width> 1000 </width>
+      <height>600 </height>
+      <columns> 1 </columns>
+    </chart-group>
+    
+    <chart-group name="SESSION">
+      <description> </description>
+      <charts>
+        <chart name="SESSIONS_BY_STATUS"/>
+        <chart name="ACTIVE_SESSIONS_BY_EVENT"/>
+        <chart name="SESSIONS_BY_USER"/>
+        <chart name="ACTIVE_SESSIONS_BY_PGM"/>
+        <chart name="ACTIVITY_BY_USER"/>
+        <chart name="WRITES_BY_USER"/>
+        <chart name="CURSORS_BY_SESSION"/>
+        <chart name="PGA_BY_MACHINE"/>
+        <chart name="ALL_SESSIONS_BY_MODULE"/>
+      </charts>
+      <width> 500 </width>
+      <height> 500 </height>
+      <columns> 2 </columns>
+    </chart-group>
+    
+    <chart-group name="SESSION_OWR">
+      <description> </description>
+      <charts>
+        <chart name="SESSIONS_BY_STATUS"/>
+        <chart name="ACTIVE_SESSIONS_BY_EVENT"/>
+        <chart name="SESSIONS_BY_USER"/>
+        <chart name="ACTIVE_SESSIONS_BY_PGM"/>
+        <chart name="ACTIVITY_BY_USER"/>
+        <chart name="WRITES_BY_USER"/>
+        <chart name="CURSORS_BY_SESSION"/>
+        <chart name="PGA_BY_MACHINE"/>
+        <chart name="ALL_SESSIONS_BY_MODULE"/>
+      </charts>
+      <width> 500 </width>
+      <height> 500 </height>
+      <columns> 2 </columns>
+    </chart-group>
+    
+    <chart-group name="IO">
+      <description> </description>
+      <charts>
+        <chart name="SYSTEM_IO_HISTORY"/>
+        <chart name="DRIVE_IO_HISTORY"/>
+        <chart name="FILE_IO_HISTORY"/>
+        <chart name="TS_IO_HISTORY"/>
+        <chart name="PHYSICAL_WRITES"/>
+        <chart name="CACHE_HISTORY"/>
+      </charts>
+      <width> 400 </width>
+      <height> 240 </height>
+      <columns> 3 </columns>
+    </chart-group>
+    
+    <chart-group name="ACTIVITY">
+      <description> </description>
+      <charts>
+        <chart name="CACHE_HISTORY"/>
+        <chart name="SORT1_HISTORY"/>
+        <chart name="SORT2_HISTORY"/>
+      </charts>
+      <width> 400 </width>
+      <height> 240 </height>
+      <columns> 3 </columns>
+    </chart-group>
+    
+    <chart-group name="CONTENTION">
+      <description> </description>
+      <charts>
+        <chart name="WAITS_HISTORY"/>
+        <chart name="BUFFER_WAITS_HISTORY"/>
+        <chart name="LOG_WAITS_HISTORY"/>
+      </charts>
+      <width> 800 </width>
+      <height> 240 </height>
+      <columns> 1 </columns>
+    </chart-group>
+    
+  </chart-groups>
+  
+</powerdba-chartgroup-list>

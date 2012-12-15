@@ -1,0 +1,22 @@
+New Screen
+
+1.  Add action to mvc/PowerDbaActions
+2.  Add action to conf/actions.xml file.
+3.  Add query to conf/sql-10.xml or sql-common.xml or sql-11.xml
+3.  Modify the class MenuGenerator to add the menu item.
+
+New Lookup on an existing screen.
+
+1.  Add query to lookup-queries.xml.  The first field in the select list is the variable that the value will
+return into and must be named the same as the lookup name attribute in the lookup in lookups.xml.
+2.  Add entry to lookups.xml which is where we setup a group of lookups to a name.
+3.  Edit powerdbaManager.java in setLookup groups to attache the lookup group to the action.
+4.  In the query itself in the sql*.xml files use a question mark with a like clause for that column.  Also,
+define a bind variable in the query's xml that binds the variable name in the lookup definition into the
+position marker.
+
+Relationship between screens sql and also how variables are gotten and then bound into to the next query.
+
+The other way to get a bind variable into a query is by defining a link in the sql xml.  The variable name 
+you associate with that link is automatically passed to the next page as a request variable and can then
+be read by the next pages sql bind definitions.

@@ -1,0 +1,203 @@
+<?xml version = '1.0' encoding = 'windows-1252'?>
+
+<project name="PowerDBA" default="make" basedir=".">
+
+   <property name="version" value="1.0"/>
+   <property name="driveletter" value="d:"/>
+   <property name="fork" value="no"/> <!-- set to no to take default java_home javac -->
+	<!--<property name="javac.loc" value="C:\Program Files (x86)\Java\jdk1.6.0\bin\javac.exe"/>-->
+   <property name="basepath" value="src/"/>	
+   <!--Set the output directories-->
+   <property name="app.name" value="powerdba"/>
+   <property name="app.home" value="${driveletter}/powerdba"/>
+   <property name="dist.dir" value="${driveletter}/powerdbadist_${system.target}"/>
+   <property name="lib.dir" value="${basedir}\lib"/>
+   <property name="compile.outdir" value="${dist.dir}/powerdba/WEB-INF/classes"/>
+   <property name="lib.outdir" value="${dist.dir}/powerdba/WEB-INF/lib"/>
+   <property name="javadoc.outdir" value="d:\powerdba\javadoc"/>
+   <property name="util.outdir" value="${dist.dir}/powerdba/WEB-INF/classes/com/powerdba/util"/>
+   <property name="jdbc.outdir" value="${dist.dir}/powerdba/WEB-INF/classes/com/powerdba/jdbc"/>
+   <property name="main.outdir" value="${dist.dir}/powerdba/WEB-INF/classes/com/powerdba"/>
+   <property name="webinf.outdir" value="${dist.dir}/powerdba/WEB-INF"/>
+
+   <!--Set the build classpath-->
+   <path id="classpath">
+      <pathelement location="${lib.dir}/servlet.jar"/>
+      <pathelement location="${lib.dir}/jdom.jar"/>
+      <pathelement location="${lib.dir}/classes12.jar"/>  	
+      <pathelement location="${lib.dir}/cewolf.jar"/> 
+      <pathelement location="${lib.dir}/hb16.zip"/>  
+      <pathelement location="${lib.dir}/axis.jar"/>   
+      <pathelement location="${lib.dir}/commons-dbcp-1.2.1.jar"/> 
+      <pathelement location="${lib.dir}/commons-pool-1.2.jar"/>
+      <pathelement location="${lib.dir}/ojdbc14.jar"/>  	  
+      <pathelement location="${lib.dir}/log4j-1.2.12.jar"/>   	
+      <pathelement location="${lib.dir}/jcommon-0.9.5.jar"/>
+      <pathelement location="${lib.dir}/jfreechart-0.9.20.jar"/>
+      <pathelement location="${lib.dir}/commons-lang-2.4.jar"/>
+   </path>
+
+   <!--Set the source path-->
+   <path id="srcpath">
+      <pathelement location="."/>
+   </path>
+
+   <target name="init">
+      <tstamp/>
+   </target>
+
+   <target name="compile" depends="init">
+      <mkdir dir="${compile.outdir}"/>
+    <echo>srcDir: ${basepath} libDir: ${lib.dir}</echo>   
+   	<javac 
+      	destdir="${compile.outdir}" 
+      	debug="off" 
+      	encoding="Cp1252" 
+      	fork="${fork}" 
+      	executable="${java.loc}" 
+      	deprecation="off"
+      	srcdir="${basepath}"
+   		excludes="samples/**"
+      	>
+         <classpath refid="classpath"/>
+         <src refid="srcpath"/>
+        <include name="**/*.java"/>
+   		
+      	
+      </javac>
+      
+      <!--Copy files to output directory-->
+      <!--<copy file="${src.dir}/htm/WEB-INF/web.xml" tofile="${src.dir}/output/htm/WEB-INF/web.xml"/>-->
+   </target>
+
+   <target name="doc" depends="init">
+      <mkdir dir="${javadoc.outdir}"/>
+      <!--Create Javadoc-->
+      <javadoc sourcepathref="srcpath" classpathref="classpath" destdir="${javadoc.outdir}" version="false" author="false" encoding="Cp1252" additionalparam="-J-Xmx32m">
+         <package name="com.powerdba.util"/>
+         <package name="com.powerdba.jdbc"/>
+         <package name="com.powerdba.mvc"/>
+         <package name="com.powerdba"/>
+         <package name="com.powerdba.mvc.jsp"/>
+         <package name="com.powerdba.io"/>
+         <package name="com.powerdba.gui"/>
+      </javadoc>
+   </target>
+
+   <target name="clean">
+      <!--Delete output directories-->
+      <delete dir="${compile.outdir}"/>
+      <delete dir="${javadoc.outdir}"/>
+      <delete dir="${dist.dir}"/>
+   </target>
+
+   <target name="make" depends="compile"/>
+
+   <target name="rebuild" depends="clean,compile"/>
+   
+   <target name="prepare.dist">
+      <mkdir dir="${dist.dir}"/>
+      <copy todir="${dist.dir}/powerdba">
+        <fileset dir="./jsp">
+          <include name="**/*.jsp"/>
+        </fileset>
+      </copy>
+      <copy todir="${dist.dir}/powerdba/css">
+        <fileset dir="./css">
+          <include name="**/*.css"/>
+        </fileset>
+      </copy>
+      <copy todir="${dist.dir}/powerdba/images">
+        <fileset dir="./images">
+          <include name="**/*.*"/>
+        </fileset>
+      </copy>
+
+      <copy todir="${jdbc.outdir}/">
+        <fileset dir="./conf">
+          <include name="**/waitevents.xml"/>
+          <include name="**/dbconfig.xml"/>
+        </fileset>
+      </copy>
+   	
+      <copy todir="${main.outdir}/">
+        <fileset dir="./conf">
+          <include name="**/sql-9.xml"/>
+          <include name="**/sql-10.xml"/>
+          <include name="**/sql-11.xml"/>
+          <include name="**/sql-extend.xml"/>
+          <include name="**/sql-common.xml"/>
+          <include name="**/waitevents.xml"/>
+          <include name="**/perfstat.xml"/>
+          <include name="**/oraclestats-9i.xml"/>
+          <include name="**/lookups.xml"/>
+          <include name="**/lookup-queries.xml"/>
+          <include name="**/actions.xml"/>
+          <include name="**/actions-extend.xml"/>
+        </fileset>
+      </copy>
+      <copy todir="${main.outdir}/">
+        <fileset dir="./src/com/powerdba/chart">
+          <include name="**/charts.xml"/>
+          <include name="**/chart-groups.xml"/>
+        </fileset>
+      </copy>      
+      <copy todir="${lib.outdir}">
+        <fileset dir="${lib.dir}">
+          <include name="**/*"/>
+          <exclude name="**/servlet.jar"/>
+        </fileset>
+      </copy>
+	  <copy todir="${webinf.outdir}">
+	    <fileset dir="${app.home}">
+	      <include name="**/*.tld"/>
+	    </fileset>
+	  </copy>
+   </target>
+   
+   <target name="deploy" depends="clean,prepare.dist,compile">
+      <jar jarfile="${dist.dir}/${app.name}.jar" >
+       <fileset dir="${dist.dir}" includes="**" excludes="**/*Tester.class"/>
+       <manifest>
+         <attribute name="Built-By" value="${user.name}"/>
+         <section name="common">
+           <attribute name="Specification-Title" value="Power*DBA"/>
+           <attribute name="Specification-Version" value="${version} ${TODAY}"/>
+           <attribute name="Specification-Vendor" value="Power*DBA"/>
+         </section>
+       </manifest>
+      </jar>
+   </target>
+	
+   <target name="deployGui" depends="">
+      <jar jarfile="d:\jdbcGui.jar" >
+       <fileset dir="${driveletter}\powerdbadist_localhost/powerdba/WEB-INF/classes" includes="*com/powerdba/gui/*.class" excludes="**/*Tester.class"/>
+       <manifest>
+         <attribute name="Built-By" value="${user.name}"/>
+         <section name="common">
+           <attribute name="Specification-Title" value="Power*DBA"/>
+           <attribute name="Specification-Version" value="${version} ${TODAY}"/>
+           <attribute name="Specification-Vendor" value="Power*DBA"/>
+         </section>
+       </manifest>
+      </jar>
+   </target>
+   
+   <target name="deployJar" depends="clean,prepare.dist,compile">
+      <jar jarfile="d:\dbmonitor.jar" >
+       <fileset dir="${driveletter}\powerdbadist_localhost/powerdba/WEB-INF/classes" includes="**/*.*" excludes="**/*Tester.class"/>
+       <fileset dir="${driveletter}\powerdba/lib" includes="**/*.jar" excludes="**/*Tester.class"/>
+       <manifest>
+         <attribute name="Built-By" value="${user.name}"/>
+         <section name="common">
+           <attribute name="Specification-Title" value="Power*DBA"/>
+           <attribute name="Specification-Version" value="${version} ${TODAY}"/>
+           <attribute name="Specification-Vendor" value="Power*DBA"/>
+         </section>
+       </manifest>
+      </jar>
+   </target>
+
+   <target name="all" depends="compile,doc"/>
+
+</project>

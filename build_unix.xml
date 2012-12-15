@@ -1,0 +1,23 @@
+<?xml version = '1.0' encoding = 'windows-1252'?>
+
+<project name="PowerDBA" default="build" basedir=".">
+
+  <property name="network.dist" value="\\oranfsm01\prod\PowerDBA" />
+
+  <target name="build">
+    <ant antfile="build.xml" target="deploy">
+      <property name="system.target" value="unix"/>
+    </ant>
+    
+    <delete file="\\oranfsm01/prod/PowerDBA/powerdba.jar"/>
+    
+    <copy todir="${network.dist}">
+	  <fileset dir="d:\powerdbadist_unix">
+		<include name="**/powerdba.jar"/>
+	  </fileset>
+	</copy>
+
+  </target>
+  
+</project>
+

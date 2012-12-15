@@ -1,0 +1,730 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<powerdba-query-list>
+
+<queries>
+
+
+    <query name="dc20qvusage">
+      <title> Recent QV Usage </title>
+      <name> dc20qvusage </name>
+      <sql>
+      select version,
+             to_char(count(*),'999,999,999,999') total_requests,
+                    number_of_vins_carfax_decoded vins_decoded,
+                           to_char(decode(version, 1, round(avg(response_time),4)*1000, round(avg(response_time),4)),'999,999') as "response avg(ms)",
+                                  to_char(decode(version, 1, round(stddev(response_time),4)*1000, round(stddev(response_time),4)),'999,999') as "response stdd(ms)"
+                                  from WHSE_ADMIN.whse_qv_header
+                                  where successful_request = 'Y'
+                                  and request_date > sysdate-1
+                                  and number_of_vins_carfax_decoded > 0
+                                  group by version, number_of_vins_carfax_decoded
+                                  order by version, number_of_vins_carfax_decoded
+      </sql>
+    </query>
+
+
+    <query name="standbystatus">
+      <title> Standby Status </title>
+      <name> standbystatus </name>
+      <sql>    
+    select inst_id, SEQUENCE# LAST_SEQ,to_char(sysdate - FIRST_TIME,'999.99')  days_behind,to_char(FIRST_TIME,'dd/mm/yy HH:MI:ss am') STANDBY_CURRENT_AS_OF,
+    COMPLETION_TIME RECEIVED_ON,applied, blocks
+    from GV$ARCHIVED_LOG where sequence# = ( select max(SEQUENCE#) from GV$ARCHIVED_LOG where APPLIED='YES')
+      </sql>  
+    </query>
+
+    <query name="hldbs">
+      <title> Findacar/dealer dbs </title>
+      <name> hldbs </name>
+      <sql>    
+select db_type, db, dbvendor || '-' || decode(dbvendor,'OC','Oracle via CM','OU','Oracle via URL','MC','MySQL via CM','MU','MySQL via URL') connect_method, jdbc_url, state || '-' || decode(state,'P','Selectable','L','Loading','I','Inactive','E','Error') state,
+       username login_user, schema, to_char(last_update,'mm/dd/yyyy hh24:mi:ss') last_update, jndi_name from hl_admin.hl_dbs
+      </sql>  
+    </query>
+    
+    <query name="resumable">
+      <title> Resumable </title>
+      <name> resumable </name>
+      <sql>    
+select * from dba_resumable
+      </sql>  
+    </query>
+
+<query name="cpubyservice">
+      <title> CPU Intensity by Service </title>
+      <name> cpubyservice </name>
+      <rac-enabled> N </rac-enabled>
+      <sql>
+          select vs.service_name, 
+                 to_char((sum(tm1.value)/decode(sum(tm2.value),0,.000000001,sum(tm2.value)))*100,'9,999.99')||'%' "Time On CPU",
+                 count(*) total_active_sessions,
+                 to_char(sum(gvss1.value)+sum(gvss2.value),'999,999,999,999') logical_reads,
+                 to_char(sum(gvss3.value),'999,999,999,999') physical_reads,
+                 to_char(((sum(gvss1.value)+sum(gvss2.value)-sum(gvss3.value))/(sum(gvss1.value)+sum(gvss2.value))*100),'999.99') "Hit Ratio",
+                 to_char(sum(gvwaituserio.time_waited)/100,'999,999,999,999') "User IO Time",
+                 to_char(sum(gvwaitcluster.time_waited)/100,'999,999,999,999') "Cluster Time",
+                 to_char(sum(tm1.value)/1000000,'999,999,999,999') "Seconds On CPU",
+                 to_char(sum(tm2.value)/1000000,'999,999,999,999') "Total DB Time" ,
+                 to_char(sum(gvwaitidle.time_waited)/100,'999,999,999,999') "Idle Time"              
+              from gv$session vs,
+                   gv$sess_time_model tm1, -- DB CPU
+                   gv$sess_time_model tm2, -- DB Time
+                   gv$sesstat gvss1,       -- gets
+                   gv$sesstat gvss2,       -- db block gets
+                   gv$sesstat gvss3,       -- physical reads
+                   gv$session_wait_class gvwaitidle,
+                   gv$session_wait_class gvwaituserio,
+                   gv$session_wait_class gvwaitcluster
+              where vs.inst_id = tm1.inst_id
+                and vs.sid     = tm1.sid
+                and vs.inst_id = tm2.inst_id
+                and vs.sid     = tm2.sid
+                and tm1.stat_name  = 'DB CPU' 
+                and tm2.stat_name  = 'DB time' 
+                and vs.inst_id = gvss1.inst_id
+                and vs.sid = gvss1.sid
+                and gvss1.statistic# = 50
+                and vs.inst_id = gvss2.inst_id
+                and vs.sid = gvss2.sid
+                and gvss2.statistic# = 47
+                and vs.inst_id = gvss3.inst_id
+                and vs.sid = gvss3.sid   
+                and gvss3.statistic# = 54  
+                and vs.inst_id = gvwaitidle.inst_id
+                and vs.sid     = gvwaitidle.sid   
+                and gvwaitidle.wait_class = 'Idle'
+                and vs.inst_id = gvwaituserio.inst_id
+                and vs.sid     = gvwaituserio.sid   
+                and gvwaituserio.wait_class = 'User I/O'
+                and vs.inst_id = gvwaitcluster.inst_id
+                and vs.sid     = gvwaitcluster.sid   
+                and gvwaitcluster.wait_class = 'Cluster'           
+                --and vs.status = 'ACTIVE'
+                and vs.type = 'USER'                   
+              group by vs.service_name
+              order by 2 desc
+      </sql>      
+    </query>
+
+    <query name="q_messages_ext">
+      <title> Queue Contents Summary </title>
+      <name> q_messages_ext </name>
+      <rac-enabled> N </rac-enabled>
+      <sql>
+          select queue_name, message_type, message_count, earliest_enq_time, 
+                 latest_enq_time,fuzzy_latency, payload_type, queue_table 
+            from table(ifc_admin.queue_info('IFC_ADMIN','%'||?||'%'))
+      </sql>
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> queuename </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>
+        
+    </query>
+  
+    <query name="queues_ext">
+      <title> Queues </title>
+      <name> queues_ext </name>
+      <rac-enabled> N </rac-enabled>
+      <sql>
+          select * from dba_queues where queue_type = 'NORMAL_QUEUE' and owner = 'IFC_ADMIN'
+            order by name
+      </sql>
+      
+      <links>
+        <link>
+          <action> Q_MESSAGES_EXT </action>
+          <column> Name </column>
+          <linkvars>
+            <var>
+              <varname> queuename </varname>
+              <from-column> name </from-column>
+            </var>
+          </linkvars>
+        </link>              
+      </links>    
+    </query>
+  
+    <query name="global_current_service_metrics">
+      <title> Realtime Service Metrics (Active Sessions) </title>
+      <name> global_current_service_metrics </name>
+      <rac-enabled> N </rac-enabled>
+      <sql>
+          select vs.service_name, 
+                 to_char(sum(vss.value),'999,999,999,999,999') "Metric^",
+                 count(*) active_sessions
+              from gv$session vs,
+                   gv$process vp, 
+                   gv$sesstat vss 
+              where vs.paddr = vp.addr(+)
+                AND vs.inst_id = vp.inst_id (+)
+                and vs.sid = vss.sid
+                AND vs.inst_id = vss.inst_id (+)
+                and vss.statistic# (+) = ?
+                and vs.status like ?
+                and vs.username like ?
+                and vs.type like ?
+                and nvl(vs.module,'xxx') like ?
+                and nvl(machine,'xxx') like ?
+                and nvl(vs.service_name,'xxx') like ?
+                and (lower(nvl(vs.program,'xxx')) not like '%emagent%' or vs.program like '%(J%')
+                and vs.event not in ('wait for unread message on broadcast channel',
+                                     'Streams AQ: waiting for messages in the queue')
+              group by vs.service_name
+              order by sum(vss.value) desc
+      </sql>
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> statistic </name>
+          <default-value> 9 </default-value>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> sessionstatus </name>
+          <default-value> ACTIVE </default-value>
+        </var>
+        <var>
+          <position> 3 </position>
+          <name> oracleuser </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 4 </position>
+          <name> sessiontype </name>
+          <default-value> USER </default-value>
+        </var>
+        <var>
+          <position> 5 </position>
+          <name> module </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 6 </position>
+          <name> machine </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 7 </position>
+          <name> service </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>
+      
+    </query>
+    
+
+
+    
+    <query name="current_service_metrics">
+      <title> Realtime Service Metrics </title>
+      <name> current_service_metrics </name>
+      <rac-enabled> Y </rac-enabled>
+      <sql>
+          select vs.service_name, 
+                 to_char(sum(vss.value),'999,999,999,999,999') "Metric^"
+              from v$session vs,
+                   v$process vp, 
+                   v$sesstat vss 
+              where vs.paddr = vp.addr(+)
+                and vs.sid = vss.sid
+                and vss.statistic# (+) = ?
+                and vs.status like ?
+                and vs.username like ?
+                and vs.type like ?
+                and nvl(vs.module,'xxx') like ?
+                and nvl(machine,'xxx') like ?
+                and nvl(vs.service_name,'xxx') like ?
+              group by vs.service_name
+              order by sum(vss.value) desc
+      </sql>
+      
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> statistic </name>
+          <default-value> 9 </default-value>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> sessionstatus </name>
+          <default-value> ACTIVE </default-value>
+        </var>
+        <var>
+          <position> 3 </position>
+          <name> oracleuser </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 4 </position>
+          <name> sessiontype </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 5 </position>
+          <name> module </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 6 </position>
+          <name> machine </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 7 </position>
+          <name> service </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>
+      
+    </query>
+    
+
+    <query name="transactions">
+      <title> Active Transactions </title>
+      <name> transactions </name>
+      <rac-enabled> Y </rac-enabled>
+      <sql>
+select to_char(((sysdate - t.start_date)*24*60),'999.99') minutes_open, t.start_scn, t.log_io, 
+       t.phy_io, t.cr_get, t.cr_change, 
+       t.xidusn, t.xidslot, t.xidsqn, 
+       s.sid, 
+       s.username, s.osuser, s.command, s.program, s.machine, s.event , vs.sql_text
+  from v$transaction t,
+       v$session s,
+       v$sql vs
+  where t.ses_addr = s.saddr (+)
+    and s.sql_id = vs.sql_id (+) 
+  order by 1 desc
+      </sql>   
+   </query>
+   
+   <query name="enq_stats">
+      <title> Enqueue Statistics </title>
+      <name> enq_stats </name>
+      <rac-enabled> Y </rac-enabled>
+      <sql>
+select * from v$enqueue_statistics order by cum_wait_time desc
+      </sql>   
+   </query>
+   
+   <query name="platefax_history">
+      <title> Platefax History </title>
+      <name> platefax_history </name>
+      <rac-enabled> N </rac-enabled>
+      <sql>
+select *
+from PFX_ADMIN.PFX_REFRESH_HISTORY
+order by refresh_start desc
+      </sql>   
+   </query>
+    
+    <query name="sessions_sql">
+      <title> Active Sessions SQL </title>
+      <name> sessions_sql </name>
+      <rac-enabled> N </rac-enabled>
+      <sql>
+          select vs.sid "Sid", 
+                 lower(vs.username) "Ora User", 
+                 substr(lower(vs.module) || ' ' || lower(vs.action),1,15) "App Info", 
+                 vs.event "Current Wait Event",
+                 to_char(sa.executions,'999,999,999,999') execs,
+                 to_char(round(sa.buffer_gets/sa.executions,0),'999,999') "gets/exec",
+                 sa.sql_text "Current SQL"
+              from v$session vs,
+                   v$sqlarea sa
+              where vs.sql_id = sa.sql_id (+)
+                and vs.status ='ACTIVE'
+                and vs.type = 'USER'
+                and lower(nvl(vs.program,'xxx')) not like '%emagent%'
+                and nvl(vs.module,'XXX') != 'Power*DBA'
+                and vs.event not in ('wait for unread message on broadcast channel',
+                                     'Streams AQ: waiting for messages in the queue',
+                                     'rdbms ipc message','jobq slave wait')
+              order by vs.status
+      </sql>   
+   </query>
+    
+
+    
+
+    
+    <query name="carfaxcontrolmservices">
+      <title> Control-M Instances Summary </title>
+      <name> carfaxcontrolmservices </name>
+      <sql>
+select instance_name, count(*) How_many 
+  from sys.database_services 
+  where service_name in ('pautosvc','PMJQMSVC','pbatchsvc') 
+  group by instance_name
+  order by instance_name
+      </sql>  
+    </query>
+    
+    <query name="carfaxcontrolmservicesdetail">
+      <title> Control-M Instances </title>
+      <name> carfaxcontrolmservicesdetail </name>
+      <sql>
+select instance_name, service_name 
+  from sys.database_services 
+  where service_name in ('pautosvc','PMJQMSVC','pbatchsvc') 
+  order by instance_name, service_name
+      </sql>  
+    </query>
+    
+   <query name="elapsedqueries">
+      <title> Longest Running Queries </title>
+      <name> elapsedqueries </name>
+      <sql>    
+    select substr(sql_text,1,150) sqltext, 
+       nvl(parsing_schema_name,'NA') parsing_user,
+       to_char(executions,'999,999,999,999,999') executions, 
+       to_char(round(elapsed_time/executions/1000000,1),'999,999.9') elapsed_time_per_exec 
+    from v$sql 
+    where executions > 5
+      and elapsed_time/executions/1000000 > .1
+      and parsing_schema_name not in ('SYS','SYSTEM')
+      --and (parsing_schema_name is null or parsing_schema_name like '%USER%' or parsing_schema_name = 'NPG_WEB_APP_OWNER')
+    order by 4 desc      
+      </sql>                   
+    </query>  
+    
+    <query name="jdbcurls">
+      <title> JDBC URLs </title>
+      <name> jdbcurls </name>
+      <sql>    
+    select column_value url from odm_admin.jdbcurls order by column_value      
+      </sql>                   
+    </query>
+    
+    <query name="oncsyncstatus">
+      <title> Oncontact Sync Status </title>
+      <name> oncsyncstatus </name>
+      <sql>    
+    select sync_date as "Sync Check Date",name as table_name,cnt_diff as "Row Count Difference", data_diff as "Data Difference",source_total as "PCFXV rowcount", dest_total as "PCFXM rowcount",round(compare_time ,2) as "Minutes to perform sync Check", error
+From strm_admin.sync_checker
+where (name,sync_date) in (select name,max(sync_date) from strm_admin.sync_checker group by name)
+order by (nvl(cnt_diff,0) + nvl(data_diff,0)) desc      
+      </sql>                   
+    </query>  
+    
+
+    
+    <query name="appmontaskruns">
+      <title> App Monitor Task Runs </title>
+      <name> appmontaskruns </name>
+      <sql>    
+    select t.task_id,
+           t.system_name, 
+           t.subsystem_name, 
+           tr.subsystem_execution_id run_description,
+           t.task_name, 
+           case tr.end_time
+             when to_date('1969-12-31 18:00','yyyy-mm-dd hh24:mi') then 
+           odm_admin.odm_format_time(elapsed_seconds/86400) total_elapsed_time, 
+           tr.start_time, 
+           tr.end_time, 
+           to_char(gets,'999,999,999,999') buffer_gets,
+           to_char(physical_reads,'999,999,999,999') physical_reads,      
+           to_char(oncpu_pct,'999.99')||'%' oncpu_pct,
+           to_char(userio_pct,'999.99')||'%' userio_pct,
+           to_char(cluster_pct,'999.99')||'%' cluster_pct,
+           to_char(application_pct,'999.99')||'%' application_pct,
+           to_char(commit_pct,'999.99')||'%' commit_pct,
+           to_char(other_pct,'999.99')||'%' other_pct,
+           to_char(idle_pct,'999.99')||'%' idle_pct,  
+           tr.state, 
+           tr.service_name, 
+           tr.instance_name, 
+           tr.sid, 
+           tr.program, 
+           tr.username
+      from odm_admin.app_monitor_vw_task_runs tr,
+           odm_admin.app_monitor_tasks t 
+      where t.task_id = tr.task_id
+        and t.system_name like ?
+        and t.subsystem_name like ?
+        and t.task_name like ?
+        and tr.subsystem_execution_id like ? 
+      order by tr.start_time desc     
+      </sql>    
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> systemname </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> subsystemname </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 3 </position>
+          <name> taskname </name>
+          <default-value> % </default-value>
+        </var>        
+        <var>
+          <position> 4 </position>
+          <name> rundescription </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>  
+      <links>
+        <link>
+          <action> APPMONTASKRUNS </action>
+          <column> task_id </column>
+          <linkvars>
+            <var>
+              <varname> systemname </varname>
+              <from-column> system_name </from-column>
+            </var>
+            <var>
+              <varname> subsystemname </varname>
+              <from-column> subsystem_name </from-column>
+            </var>
+            <var>
+              <varname> taskname </varname>
+              <from-column> task_name </from-column>
+            </var>         
+          </linkvars>
+        </link>  
+      </links>         
+                   
+    </query> 
+    
+    <query name="appmontaskrunsrollup">
+      <title> App Monitor Task Runs Rolled Up</title>
+      <name> appmontaskrunsrollup </name>
+      <sql>    
+    select system_name, 
+           subsystem_name, 
+           run_description,
+           state,
+           task_count,
+           odm_admin.odm_format_time(elapsed_seconds/86400) total_elapsed_time,
+           start_time,
+           end_time,
+           --odm_admin.odm_format_time(oncpu/86400) CPU_time, 
+           --odm_admin.odm_format_time(userio_waits/86400) userio_time,
+           --odm_admin.odm_format_time(idle_waits/86400) idle_time, 
+           --odm_admin.odm_format_time(cluster_waits/86400) cluster_time,
+           to_char(gets,'999,999,999,999') buffer_gets,
+           to_char(physical_reads,'999,999,999,999') physical_reads,      
+           to_char(oncpu_pct,'999.99')||'%' oncpu_pct,
+           to_char(userio_pct,'999.99')||'%' userio_pct,
+           to_char(cluster_pct,'999.99')||'%' cluster_pct,
+           to_char(application_pct,'999.99')||'%' application_pct,
+           to_char(commit_pct,'999.99')||'%' commit_pct,
+           to_char(other_pct,'999.99')||'%' other_pct,
+           to_char(idle_pct,'999.99')||'%' idle_pct       
+      from odm_admin.app_monitor_vw_runs_rollup
+      where system_name like ?
+        and subsystem_name like ?
+      order by start_time desc     
+      </sql>
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> systemname </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> subsystemname </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>
+      <links>
+        <link>
+          <action> APPMONTASKRUNS </action>
+          <column> task_count </column>
+          <linkvars>
+            <var>
+              <varname> systemname </varname>
+              <from-column> system_name </from-column>
+            </var>
+            <var>
+              <varname> subsystemname </varname>
+              <from-column> subsystem_name </from-column>
+            </var>
+            <var>
+              <varname> rundescription </varname>
+              <from-column> run_description </from-column>
+            </var>           
+          </linkvars>
+        </link>  
+      </links>                  
+    </query> 
+    
+    <query name="appmonsystems">
+      <title> App Monitor Systems </title>
+      <name> appmonsystems </name>
+      <sql>    
+         select system_name, 'Show Subsystems' "Subsystem",'Show Runs' "Runs" from odm_admin.app_monitor_systems     
+      </sql> 
+      <links>
+        <link>
+          <action> APPMONSUBSYSTEMS </action>
+          <column> subsystem </column>
+          <linkvars>
+            <var>
+              <varname> systemname </varname>
+              <from-column> system_name </from-column>
+            </var>
+          </linkvars>
+        </link>
+        <link>
+          <action> APPMONTASKRUNSROLLUP </action>
+          <column> runs </column>
+          <linkvars>
+            <var>
+              <varname> systemname </varname>
+              <from-column> system_name </from-column>
+            </var>
+          </linkvars>
+        </link>   
+      </links>                    
+    </query>
+    
+    <query name="appmonsubsystems">
+      <title> App Monitor Subsystems </title>
+      <name> appmonsubsystems </name>
+      <sql>    
+         select system_name, subsystem_name, 'Show Tasks' "Tasks",'Show Runs' "Runs"  
+           from odm_admin.app_monitor_subsystems
+           where system_name like ?     
+      </sql>  
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> systemname </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables> 
+      <links>
+        <link>
+          <action> APPMONTASKS</action>
+          <column> tasks </column>
+          <linkvars>
+            <var>
+              <varname> systemname </varname>
+              <from-column> system_name </from-column>
+            </var>
+            <var>
+              <varname> subsystemname </varname>
+              <from-column> subsystem_name </from-column>
+            </var>
+          </linkvars>
+        </link>  
+        <link>
+          <action> APPMONTASKRUNSROLLUP </action>
+          <column> runs </column>
+          <linkvars>
+            <var>
+              <varname> systemname </varname>
+              <from-column> system_name </from-column>
+            </var>
+            <var>
+              <varname> subsystemname </varname>
+              <from-column> subsystem_name </from-column>
+            </var>
+          </linkvars>
+        </link> 
+      </links>          
+    </query> 
+    
+    <query name="appmontasks">
+      <title> App Monitor Tasks </title>
+      <name> appmontasks </name>
+      <sql>    
+        select system_name, subsystem_name, task_name, traceon, statson, timingon, moduleon 
+          from odm_admin.app_monitor_tasks
+          where system_name like ?
+            and subsystem_name like ?     
+      </sql>   
+      <bind-variables>
+        <var>
+          <position> 1 </position>
+          <name> systemname </name>
+          <default-value> % </default-value>
+        </var>
+        <var>
+          <position> 2 </position>
+          <name> subsystemname </name>
+          <default-value> % </default-value>
+        </var>
+      </bind-variables>                 
+    </query>
+    
+    <query name="appmonlog">
+      <title> App Monitor Log </title>
+      <name> appmonlog </name>
+      <sql>    
+        select system_name, subsystem_name, task_name, log_msg, log_date 
+          from odm_admin.app_monitor_log 
+          order by log_date desc    
+      </sql>                   
+    </query>   
+    
+    <query name="odmproperties">
+      <title> ODM Properties </title>
+      <name> odmproperties </name>
+      <sql>    
+        select * from odm_admin.odm_properties order by property   
+      </sql>                   
+    </query>  
+    
+    <query name="tunedundoall">
+      <title> Undo Retention By Instance </title>
+      <name> tunedundoall </name>
+      <sql>    
+        select (select to_char(min(tuned_undoretention)/(60*60*24),'999.99')  from V$UNDOSTAT) Actual ,
+               (select to_char(min(value)/(60*60*24),'999.99') value from v$parameter where name = 'undo_retention') in_theory 
+                 from dual
+      </sql>                   
+    </query> 
+    
+    <query name="tunedundosummary">
+      <title> Undo Retention Minimum</title>
+      <name> tunedundosummary </name>
+      <sql>    
+        select (select to_char(min(tuned_undoretention)/(60*60*24),'999.99')  from GV$UNDOSTAT) Actual ,
+               (select to_char(min(value)/(60*60*24),'999.99') value from Gv$parameter where name = 'undo_retention') in_theory 
+                 from dual
+      </sql>                   
+    </query> 
+    
+    <query name="aqconsumers">
+      <title> Messaging Framework Consumers </title>
+      <name> aqconsumers </name>
+      <sql>    
+        select c.queue_name, c.consumer_name, c.target_db, c.app_server, 
+        c.thread_target "target threads", c.threads_running "threads running",c.earliest_ping||'-'||c.latest_ping||' Secs' ping_range, 
+        c.enabled, c.language, c.username connected_as, monitor, c.discard_unknown_message_types,
+        'https://log-mo.svc.cfx:8000/en-US/app/search/flashtimeline?q=search%20'||upper(target_db)||'.'||upper(consumer_name)||'.'||upper(queue_name)||'%26earliest=-15m%40m%26latest=now' splunk_link        
+          from ifc_admin.aq_consumer_view c
+          order by c.consumer_name, c.target_db, c.app_server      
+      </sql>                   
+    </query> 
+    
+    <query name="aqconsumerthreads">
+      <title> Consumer Threads </title>
+      <name> aqconsumerthreads </name>
+      <sql>    
+        select queue_name, consumer_name, target_db, thread_number, 
+        thread_name, app_server, 
+        to_char(round(LAST_touch_ago_ms/1000,0),'999999') || ' Secs Ago' last_active_secs, 
+        last_touch_date from ifc_admin.aq_running_threads order by thread_name, app_server      
+      </sql>                   
+    </query> 
+
+  </queries>
+  
+</powerdba-query-list>
+

@@ -1,0 +1,15 @@
+<powerdba-access>
+
+  <db-connections>
+
+    <db>
+      <poolname>xe</poolname>
+      <dbdriver>oracle.jdbc.driver.OracleDriver</dbdriver>
+      <connectstring>jdbc:oracle:thin:@localhost:1521:xe</connectstring>
+      <login>system</login>
+      <password>kwg5377</password>
+    </db>
+
+  </db-connections>
+
+</powerdba-access>

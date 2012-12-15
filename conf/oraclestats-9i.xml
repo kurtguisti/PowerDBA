@@ -1,0 +1,2284 @@
+<oracle-stat-list>
+
+  <oracle-stats>
+  
+    <statistic>                                                                     
+      <name>OS Block input operations</name>                                                
+      <number>0</number>                                                            
+      <sclass>16</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic> 
+    
+    <statistic>                                                                     
+      <name>OS Block output operations</name>                                                
+      <number>0</number>                                                            
+      <sclass>16</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic> 
+  
+    <statistic>                                                                     
+      <name>hot buffers moved to head of LRU</name>                                                
+      <number>0</number>                                                            
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>  
+    
+    <statistic>                                                                     
+      <name>dirty buffers inspected</name>                                                
+      <number>0</number>                                                            
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic> 
+    
+    <statistic>                                                                     
+      <name>logons cumulative</name>                                                
+      <number>0</number>                                                            
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>logons current</name>                                                   
+      <number>1</number>                                                            
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>opened cursors cumulative</name>                                        
+      <number>2</number>                                                            
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>opened cursors current</name>                                           
+      <number>3</number>                                                            
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>user commits</name>                                                     
+      <number>4</number>                                                            
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>user rollbacks</name>                                                   
+      <number>5</number>                                                            
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>user calls</name>                                                       
+      <number>6</number>                                                            
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>recursive calls</name>                                                  
+      <number>7</number>                                                            
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>recursive cpu usage</name>                                              
+      <number>8</number>                                                            
+      <sclass>1</sclass>                                                              
+      <unit-of-measure>seconds</unit-of-measure>                                           
+      <multiplier>10000</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>session logical reads</name>                                            
+      <number>9</number>                                                            
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>session stored procedure space</name>                                   
+      <number>10</number>                                                           
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>CPU used when call started</name>                                       
+      <number>11</number>                                                           
+      <sclass>128</sclass>                                                            
+      <unit-of-measure>seconds</unit-of-measure>                                           
+      <multiplier>10000</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>CPU used by this session</name>                                         
+      <number>12</number>                                                           
+      <sclass>1</sclass>                                                              
+      <unit-of-measure>seconds</unit-of-measure>                                           
+      <multiplier>10000</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>session connect time</name>                                             
+      <number>13</number>                                                           
+      <sclass>1</sclass>                                                              
+      <unit-of-measure>seconds</unit-of-measure>                                           
+      <multiplier>10000</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>process last non-idle time</name>                                       
+      <number>14</number>                                                           
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>session uga memory</name>                                               
+      <number>15</number>                                                           
+      <sclass>1</sclass>                                                              
+      <unit-of-measure>Kbytes</unit-of-measure>                                           
+      <multiplier>1024</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>session uga memory max</name>                                           
+      <number>16</number>                                                           
+      <sclass>1</sclass>                                                              
+      <unit-of-measure>Kbytes</unit-of-measure>                                           
+      <multiplier>1024</multiplier>                                                   
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>messages sent</name>                                                    
+      <number>17</number>                                                           
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>messages received</name>                                                
+      <number>18</number>                                                           
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>background timeouts</name>                                              
+      <number>19</number>                                                           
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>session pga memory</name>                                               
+      <number>20</number>                                                           
+      <sclass>1</sclass>                                                              
+      <unit-of-measure>Kbytes</unit-of-measure>                                           
+      <multiplier>1024</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>session pga memory max</name>                                           
+      <number>21</number>                                                           
+      <sclass>1</sclass>                                                              
+      <unit-of-measure>Kbytes</unit-of-measure>                                           
+      <multiplier>1024</multiplier>                                                   
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>enqueue timeouts</name>                                                 
+      <number>22</number>                                                           
+      <sclass>4</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>enqueue waits</name>                                                    
+      <number>23</number>                                                           
+      <sclass>4</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>enqueue deadlocks</name>                                                
+      <number>24</number>                                                           
+      <sclass>4</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>enqueue requests</name>                                                 
+      <number>25</number>                                                           
+      <sclass>4</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>enqueue conversions</name>                                              
+      <number>26</number>                                                           
+      <sclass>4</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>enqueue releases</name>                                                 
+      <number>27</number>                                                           
+      <sclass>4</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global lock sync gets</name>                                            
+      <number>28</number>                                                           
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global lock async gets</name>                                           
+      <number>29</number>                                                           
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global lock get time</name>                                             
+      <number>30</number>                                                           
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global lock sync converts</name>                                        
+      <number>31</number>                                                           
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global lock async converts</name>                                       
+      <number>32</number>                                                           
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global lock convert time</name>                                         
+      <number>33</number>                                                           
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global lock releases</name>                                             
+      <number>34</number>                                                           
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>total file opens</name>                                                 
+      <number>35</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>opens requiring cache replacement</name>                                
+      <number>36</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>opens of replaced files</name>                                          
+      <number>37</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>gcs messages sent</name>                                                
+      <number>38</number>                                                           
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>ges messages sent</name>                                                
+      <number>39</number>                                                           
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>db block gets</name>                                                    
+      <number>40</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure>blocks</unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>consistent gets</name>                                                  
+      <number>41</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure>blocks</unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>physical reads</name>                                                   
+      <number>42</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure>IOs</unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>db block changes</name>                                                 
+      <number>43</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure>blocks</unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>consistent changes</name>                                               
+      <number>44</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure>blocks</unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>recovery blocks read</name>                                             
+      <number>45</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure>blocks</unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>physical writes</name>                                                  
+      <number>46</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>physical writes non checkpoint</name>                                   
+      <number>47</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>summed dirty queue length</name>                                        
+      <number>48</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DBWR checkpoint blocks written</name>                                  
+      <number>49</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DBWR transaction table writes</name>                                    
+      <number>50</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DBWR undo block writes</name>                                           
+      <number>51</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DBWR revisited being-written buffer</name>                              
+      <number>52</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DBWR make free requests</name>                                          
+      <number>53</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DBWR free blocks found</name>                                          
+      <number>54</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DBWR lru scans</name>                                                   
+      <number>55</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DBWR summed scan depth</name>                                           
+      <number>56</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DBWR blocks scanned</name>                                             
+      <number>57</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DBWR checkpoints</name>                                                 
+      <number>58</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DBWR cross instance writes</name>                                       
+      <number>59</number>                                                           
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DBWR fusion writes</name>                                               
+      <number>60</number>                                                           
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>remote instance undo block writes</name>                                
+      <number>61</number>                                                           
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>remote instance undo header writes</name>                               
+      <number>62</number>                                                           
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>prefetch clients - keep</name>                                          
+      <number>63</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>prefetch clients - recycle</name>                                       
+      <number>64</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>prefetch clients - default</name>                                       
+      <number>65</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>prefetch clients - 2k</name>                                            
+      <number>66</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>prefetch clients - 4k</name>                                            
+      <number>67</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>prefetch clients - 8k</name>                                            
+      <number>68</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>prefetch clients - 16k</name>                                           
+      <number>69</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>prefetch clients - 32k</name>                                           
+      <number>70</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>change write time</name>                                                
+      <number>71</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>redo synch writes</name>                                                
+      <number>72</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>redo synch time</name>                                                  
+      <number>73</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>exchange deadlocks</name>                                               
+      <number>74</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>free buffer requested</name>                                            
+      <number>75</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>dirty blocks inspected</name>                                          
+      <number>76</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>pinned blocks inspected</name>                                         
+      <number>77</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>hot blocks moved to head of LRU</name>                                 
+      <number>78</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>free buffer inspected</name>                                            
+      <number>79</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>commit cleanout failures: write disabled</name>                         
+      <number>80</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>commit cleanout failures: block lost</name>                             
+      <number>81</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>commit cleanout failures: cannot pin</name>                             
+      <number>82</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>commit cleanout failures: hot backup in progress</name>                 
+      <number>83</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>commit cleanout failures: buffer being written</name>                   
+      <number>84</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>commit cleanout failures: callback failure </name>                      
+      <number>85</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>commit cleanouts</name>                                                 
+      <number>86</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>commit cleanouts successfully completed</name>                          
+      <number>87</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>recovery array reads</name>                                             
+      <number>88</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>recovery array read time</name>                                         
+      <number>89</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>CR blocks created</name>                                                
+      <number>90</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>current blocks converted for CR</name>                                  
+      <number>91</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>switch current to new buffer</name>                                     
+      <number>92</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>write clones created in foreground</name>                               
+      <number>93</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>write clones created in background</name>                               
+      <number>94</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>prefetched blocks</name>                                                
+      <number>95</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>prefetched blocks aged out before use</name>                            
+      <number>96</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>physical reads direct</name>                                            
+      <number>97</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>physical writes direct</name>                                           
+      <number>98</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>physical reads direct (lob)</name>                                      
+      <number>99</number>                                                           
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>physical writes direct (lob)</name>                                     
+      <number>100</number>                                                          
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>cold recycle reads</name>                                               
+      <number>101</number>                                                          
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>consistent gets - examination</name>                                    
+      <number>102</number>                                                          
+      <sclass>8</sclass>                                                              
+      <unit-of-measure>blocks</unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>shared hash latch upgrades - no wait</name>                             
+      <number>103</number>                                                          
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>shared hash latch upgrades - wait</name>                                
+      <number>104</number>                                                          
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>calls to kcmgcs</name>                                                  
+      <number>105</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>calls to kcmgrs</name>                                                  
+      <number>106</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>calls to kcmgas</name>                                                  
+      <number>107</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>next scns gotten without going to GES</name>                            
+      <number>108</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>Unnecesary process cleanup for SCN batching</name>                      
+      <number>109</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>calls to get snapshot scn: kcmgss</name>                                
+      <number>110</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>kcmgss waited for batching</name>                                       
+      <number>111</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>kcmgss read scn without going to GES</name>                             
+      <number>112</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>kcmccs called get current scn</name>                                    
+      <number>113</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>redo entries</name>                                                     
+      <number>114</number>                                                          
+      <sclass>2</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>redo size</name>                                                        
+      <number>115</number>                                                          
+      <sclass>2</sclass>                                                              
+      <unit-of-measure>Kbytes</unit-of-measure>                                           
+      <multiplier>1024</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>redo buffer allocation retries</name>                                   
+      <number>116</number>                                                          
+      <sclass>2</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>redo wastage</name>                                                     
+      <number>117</number>                                                          
+      <sclass>2</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>redo writer latching time</name>                                        
+      <number>118</number>                                                          
+      <sclass>2</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>redo writes</name>                                                      
+      <number>119</number>                                                          
+      <sclass>2</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>redo blocks written</name>                                              
+      <number>120</number>                                                          
+      <sclass>2</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>redo write time</name>                                                  
+      <number>121</number>                                                          
+      <sclass>2</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>redo log space requests</name>                                          
+      <number>122</number>                                                          
+      <sclass>2</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>redo log space wait time</name>                                         
+      <number>123</number>                                                          
+      <sclass>2</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>redo log switch interrupts</name>                                       
+      <number>124</number>                                                          
+      <sclass>2</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>redo ordering marks</name>                                              
+      <number>125</number>                                                          
+      <sclass>2</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache gets</name>                                                
+      <number>126</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache get time</name>                                            
+      <number>127</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache converts</name>                                            
+      <number>128</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache convert time</name>                                        
+      <number>129</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache cr blocks received</name>                                  
+      <number>130</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache cr block receive time</name>                               
+      <number>131</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache current blocks received</name>                             
+      <number>132</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache current block receive time</name>                          
+      <number>133</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache cr blocks served</name>                                    
+      <number>134</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache cr block build time</name>                                 
+      <number>135</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache cr block flush time</name>                                 
+      <number>136</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache cr block send time</name>                                  
+      <number>137</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache current blocks served</name>                               
+      <number>138</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache current block pin time</name>                              
+      <number>139</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache current block flush time</name>                            
+      <number>140</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache current block send time</name>                             
+      <number>141</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache freelist waits</name>                                      
+      <number>142</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache defers</name>                                              
+      <number>143</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache convert timeouts</name>                                    
+      <number>144</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache blocks lost</name>                                         
+      <number>145</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache claim blocks lost</name>                                   
+      <number>146</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache blocks corrupt</name>                                      
+      <number>147</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache prepare failures</name>                                    
+      <number>148</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>global cache skip prepare failures</name>                               
+      <number>149</number>                                                          
+      <sclass>40</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>total number of slots</name>                                            
+      <number>150</number>                                                          
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>instance recovery database freeze count</name>                          
+      <number>151</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>background checkpoints started</name>                                   
+      <number>152</number>                                                          
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>background checkpoints completed</name>                                 
+      <number>153</number>                                                          
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>number of map operations</name>                                         
+      <number>154</number>                                                          
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>number of map misses</name>                                             
+      <number>155</number>                                                          
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>serializable aborts</name>                                              
+      <number>156</number>                                                          
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>transaction lock foreground requests</name>                             
+      <number>157</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>transaction lock foreground wait time</name>                            
+      <number>158</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>transaction lock background gets</name>                                 
+      <number>159</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>transaction lock background get time</name>                             
+      <number>160</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>transaction tables consistent reads - undo records applied</name>       
+      <number>161</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>transaction tables consistent read rollbacks</name>                     
+      <number>162</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>data blocks consistent reads - undo records applied</name>              
+      <number>163</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>no work - consistent read gets</name>                                   
+      <number>164</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>cleanouts only - consistent read gets</name>                            
+      <number>165</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>rollbacks only - consistent read gets</name>                            
+      <number>166</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>cleanouts and rollbacks - consistent read gets</name>                   
+      <number>167</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>RowCR attempts</name>                                                   
+      <number>168</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>RowCR hits</name>                                                       
+      <number>169</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>RowCR - row contention</name>                                           
+      <number>170</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>rollback changes - undo records applied</name>                          
+      <number>171</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>transaction rollbacks</name>                                            
+      <number>172</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>immediate (CURRENT) block cleanout applications</name>                  
+      <number>173</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>immediate (CR) block cleanout applications</name>                       
+      <number>174</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>deferred (CURRENT) block cleanout applications</name>                   
+      <number>175</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>commit txn count during cleanout</name>                                 
+      <number>176</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>active txn count during cleanout</name>                                 
+      <number>177</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>cleanout - number of ktugct calls</name>                                
+      <number>178</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>immediate CR cleanouts (index blocks)</name>                            
+      <number>179</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>deferred CUR cleanouts (index blocks)</name>                            
+      <number>180</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>Commit SCN cached</name>                                                
+      <number>181</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>Cached Commit SCN referenced</name>                                     
+      <number>182</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>table scans (short tables)</name>                                       
+      <number>183</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>table scans (long tables)</name>                                        
+      <number>184</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>table scans (rowid ranges)</name>                                       
+      <number>185</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>table scans (cache partitions)</name>                                   
+      <number>186</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>table scans (direct read)</name>                                        
+      <number>187</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>table scan rows gotten</name>                                           
+      <number>188</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>table scan blocks gotten</name>                                         
+      <number>189</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>table fetch by rowid</name>                                             
+      <number>190</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>table fetch continued row</name>                                        
+      <number>191</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>cluster key scans</name>                                                
+      <number>192</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>cluster key scan block gets</name>                                      
+      <number>193</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>rows fetched via callback</name>                                        
+      <number>194</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>leaf node splits</name>                                                 
+      <number>195</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>leaf node 90-10 splits</name>                                           
+      <number>196</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>branch node splits</name>                                               
+      <number>197</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>native hash arithmetic execute</name>                                   
+      <number>198</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>native hash arithmetic fail</name>                                      
+      <number>199</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>index fast full scans (full)</name>                                     
+      <number>200</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>index fast full scans (rowid ranges)</name>                             
+      <number>201</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>index fast full scans (direct read)</name>                              
+      <number>202</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>index fetch by key</name>                                               
+      <number>203</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>index scans kdiixs1</name>                                              
+      <number>204</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>session cursor cache hits</name>                                        
+      <number>205</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>session cursor cache count</name>                                       
+      <number>206</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>cursor authentications</name>                                           
+      <number>207</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>queries parallelized</name>                                             
+      <number>208</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DML statements parallelized</name>                                      
+      <number>209</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DDL statements parallelized</name>                                      
+      <number>210</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>DFO trees parallelized</name>                                           
+      <number>211</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>Parallel operations not downgraded</name>                               
+      <number>212</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>Parallel operations downgraded to serial</name>                         
+      <number>213</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>Parallel operations downgraded 75 to 99 pct</name>                      
+      <number>214</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>Parallel operations downgraded 50 to 75 pct</name>                      
+      <number>215</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>Parallel operations downgraded 25 to 50 pct</name>                      
+      <number>216</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>Parallel operations downgraded 1 to 25 pct</name>                       
+      <number>217</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>PX local messages sent</name>                                           
+      <number>218</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>PX local messages recv'd</name>                                         
+      <number>219</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>PX remote messages sent</name>                                          
+      <number>220</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>PX remote messages recv'd</name>                                        
+      <number>221</number>                                                          
+      <sclass>32</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>buffer is pinned count</name>                                           
+      <number>222</number>                                                          
+      <sclass>72</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>buffer is not pinned count</name>                                       
+      <number>223</number>                                                          
+      <sclass>72</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>no buffer to keep pinned count</name>                                   
+      <number>224</number>                                                          
+      <sclass>72</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>table lookup prefetch client count</name>                               
+      <number>225</number>                                                          
+      <sclass>8</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>workarea memory allocated</name>                                        
+      <number>226</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>workarea executions - optimal</name>                                    
+      <number>227</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>workarea executions - onepass</name>                                    
+      <number>228</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>workarea executions - multipass</name>                                  
+      <number>229</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>parse time cpu</name>                                                   
+      <number>230</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>parse time elapsed</name>                                               
+      <number>231</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>parse count (total)</name>                                              
+      <number>232</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>parse count (hard)</name>                                               
+      <number>233</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>parse count (failures)</name>                                           
+      <number>234</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>execute count</name>                                                    
+      <number>235</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>bytes sent via SQL*Net to client</name>                                 
+      <number>236</number>                                                          
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>bytes received via SQL*Net from client</name>                           
+      <number>237</number>                                                          
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>SQL*Net roundtrips to/from client</name>                                
+      <number>238</number>                                                          
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>bytes sent via SQL*Net to dblink</name>                                 
+      <number>239</number>                                                          
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>bytes received via SQL*Net from dblink</name>                           
+      <number>240</number>                                                          
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>SQL*Net roundtrips to/from dblink</name>                                
+      <number>241</number>                                                          
+      <sclass>1</sclass>                                                              
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>sorts (memory)</name>                                                   
+      <number>242</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>sorts (disk)</name>                                                     
+      <number>243</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>sorts (rows)</name>                                                     
+      <number>244</number>                                                          
+      <sclass>64</sclass>                                                             
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>OTC commit optimization attempts</name>                                 
+      <number>245</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>OTC commit optimization hits</name>                                     
+      <number>246</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>                                                                    
+                                                                                    
+    <statistic>                                                                     
+      <name>OTC commit optimization failure - setup</name>                          
+      <number>247</number>                                                          
+      <sclass>128</sclass>                                                            
+      <unit-of-measure></unit-of-measure>                                           
+      <multiplier>1</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic>  
+    
+    <statistic>                                                                     
+      <name>Elapsed Time</name>                          
+      <number>9999</number>                                                          
+      <sclass>999</sclass>                                                            
+      <unit-of-measure>seconds</unit-of-measure>                                           
+      <multiplier>1000</multiplier>                                                    
+      <desc></desc>                                                                
+    </statistic> 
+    
+  </oracle-stats>    
+  
+</oracle-stat-list>
